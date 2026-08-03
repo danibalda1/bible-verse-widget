@@ -1,0 +1,184 @@
+{
+  "verses": [
+    {
+      "id": 1,
+      "ref": "Juan 3:16",
+      "es": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree no se pierda, mas tenga vida eterna.",
+      "en": "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+      "pt": "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+      "fr": "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle.",
+      "it": "Perché Dio ha tanto amato il mondo, che ha dato il suo unigenito Figlio, affinché chiunque crede in lui non perisca, ma abbia vita eterna."
+    },
+    {
+      "id": 2,
+      "ref": "Salmos 23:1",
+      "es": "Jehová es mi pastor; nada me faltará.",
+      "en": "The Lord is my shepherd; I shall not want.",
+      "pt": "O Senhor é o meu pastor; nada me faltará.",
+      "fr": "L'Éternel est mon berger: je ne manquerai de rien.",
+      "it": "Il Signore è il mio pastore: nulla mi mancherà."
+    },
+    {
+      "id": 3,
+      "ref": "Filipenses 4:13",
+      "es": "Todo lo puedo en Cristo que me fortalece.",
+      "en": "I can do all things through Christ who strengthens me.",
+      "pt": "Posso todas as coisas naquele que me fortalece.",
+      "fr": "Je puis tout par celui qui me fortifie.",
+      "it": "Io posso ogni cosa in Cristo che mi fortifica."
+    },
+    {
+      "id": 4,
+      "ref": "Jeremías 29:11",
+      "es": "Porque yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz, y no de mal, para daros el fin que esperáis.",
+      "en": "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.",
+      "pt": "Porque eu sei os pensamentos que tenho a vosso respeito, diz o Senhor; pensamentos de paz e não de mal, para vos dar o fim que desejais.",
+      "fr": "Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance.",
+      "it": "Poiché io so i pensieri che ho per voi, dice il Signore, pensieri di pace e non di male, per darvi un futuro e una speranza."
+    },
+    {
+      "id": 5,
+      "ref": "Proverbios 3:5-6",
+      "es": "Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, y él enderezará tus veredas.",
+      "en": "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.",
+      "pt": "Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e ele endireitará as tuas veredas.",
+      "fr": "Confie-toi en l'Éternel de tout ton coeur, et ne t'appuie pas sur ta sagesse; reconnais-le dans toutes tes voies, et il aplanira tes sentiers.",
+      "it": "Confida nel Signore con tutto il tuo cuore e non appoggiarti sulla tua intelligenza; riconoscilo in tutte le tue vie ed egli appianerà i tuoi sentieri."
+    },
+    {
+      "id": 6,
+      "ref": "Isaías 41:10",
+      "es": "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.",
+      "en": "So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.",
+      "pt": "Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a destra da minha justiça.",
+      "fr": "Ne crains rien, car je suis avec toi; ne promène pas des regards inquiets, car je suis ton Dieu; je te fortifie, je viens à ton secours, je te soutiens de ma droite triomphante.",
+      "it": "Non temere, perché io sono con te; non ti smarrire, perché io sono il tuo Dio; io ti fortifico, ti aiuto, ti sostengo con la destra della mia giustizia."
+    },
+    {
+      "id": 7,
+      "ref": "Mateo 11:28",
+      "es": "Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.",
+      "en": "Come to me, all you who are weary and burdened, and I will give you rest.",
+      "pt": "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.",
+      "fr": "Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.",
+      "it": "Venite a me, voi tutti che siete affaticati e oppressi, e io vi darò riposo."
+    },
+    {
+      "id": 8,
+      "ref": "Romanos 8:28",
+      "es": "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.",
+      "en": "And we know that in all things God works for the good of those who love him.",
+      "pt": "E sabemos que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.",
+      "fr": "Nous savons, du reste, que toutes choses concourent au bien de ceux qui aiment Dieu.",
+      "it": "E noi sappiamo che tutte le cose cooperano al bene di quelli che amano Dio."
+    },
+    {
+      "id": 9,
+      "ref": "Josué 1:9",
+      "es": "Esfuérzate y sé valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas.",
+      "en": "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.",
+      "pt": "Não to mandei eu? Esforça-te, e tem bom ânimo; não pasmes, nem te espantes, porque o Senhor teu Deus é contigo por onde quer que andares.",
+      "fr": "Ne t'ai-je pas donné cet ordre? Fortifie-toi et prends courage; ne t'effraie point et ne t'épouvante point, car l'Éternel, ton Dieu, est avec toi partout où tu iras.",
+      "it": "Non ti ho forse comandato: Sii forte e coraggioso? Non ti spaventare e non ti sgomentare, perché il Signore, il tuo Dio, sarà con te dovunque andrai."
+    },
+    {
+      "id": 10,
+      "ref": "Salmo 46:1",
+      "es": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.",
+      "en": "God is our refuge and strength, an ever-present help in trouble.",
+      "pt": "Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.",
+      "fr": "Dieu est pour nous un refuge et un appui, un secours qui ne manque jamais dans la détresse.",
+      "it": "Dio è il nostro rifugio e la nostra forza, un aiuto sempre presente nelle difficoltà."
+    },
+    {
+      "id": 11,
+      "ref": "Gálatas 5:22-23",
+      "es": "Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe, mansedumbre, templanza.",
+      "en": "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.",
+      "pt": "Mas o fruto do Espírito é: amor, gozo, paz, longanimidade, benignidade, bondade, fé, mansidão, temperança.",
+      "fr": "Mais le fruit de l'Esprit, c'est l'amour, la joie, la paix, la patience, la bonté, la bénignité, la fidélité, la douceur, la tempérance.",
+      "it": "Ma il frutto dello Spirito è amore, gioia, pace, pazienza, benevolenza, bontà, fedeltà, mansuetudine, autocontrollo."
+    },
+    {
+      "id": 12,
+      "ref": "Salmo 121:1-2",
+      "es": "Alzaré mis ojos a los montes; ¿de dónde vendrá mi socorro? Mi socorro viene de Jehová, que hizo los cielos y la tierra.",
+      "en": "I lift up my eyes to the mountains — where does my help come from? My help comes from the Lord, the Maker of heaven and earth.",
+      "pt": "Elevo os olhos para os montes: de onde me virá o socorro? O meu socorro vem do Senhor, que fez o céu e a terra.",
+      "fr": "Je lève mes yeux vers les montagnes... D'où me viendra le secours? Le secours me vient de l'Éternel, qui a fait les cieux et la terre.",
+      "it": "Alzo gli occhi verso i monti: da dove mi verrà l'aiuto? Il mio aiuto viene dal Signore, che ha fatto il cielo e la terra."
+    },
+    {
+      "id": 13,
+      "ref": "2 Timoteo 1:7",
+      "es": "Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.",
+      "en": "For the Spirit God gave us does not make us timid, but gives us power, love and self-discipline.",
+      "pt": "Porque Deus não nos deu o espírito de temor, mas de fortaleza, e de amor, e de moderação.",
+      "fr": "Car ce n'est pas un esprit de timidité que Dieu nous a donné, mais un esprit de force, d'amour et de sagesse.",
+      "it": "Dio infatti non ci ha dato uno spirito di timidezza, ma di forza, di amore e di autocontrollo."
+    },
+    {
+      "id": 14,
+      "ref": "Mateo 6:33",
+      "es": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.",
+      "en": "But seek first his kingdom and his righteousness, and all these things will be given to you as well.",
+      "pt": "Mas buscai primeiro o reino de Deus, e a sua justiça, e todas essas coisas vos serão acrescentadas.",
+      "fr": "Cherchez premièrement le royaume et la justice de Dieu; et toutes ces choses vous seront données par-dessus.",
+      "it": "Cercate prima il regno di Dio e la sua giustizia, e tutte queste cose vi saranno date in più."
+    },
+    {
+      "id": 15,
+      "ref": "Salmo 27:1",
+      "es": "Jehová es mi luz y mi salvación; ¿de quién temeré? Jehová es la fortaleza de mi vida; ¿de quién he de atemorizarme?",
+      "en": "The Lord is my light and my salvation — whom shall I fear? The Lord is the stronghold of my life — of whom shall I be afraid?",
+      "pt": "O Senhor é a minha luz e a minha salvação; a quem temerei? O Senhor é a força da minha vida; de quem me recearei?",
+      "fr": "L'Éternel est ma lumière et mon salut: de qui aurais-je peur? L'Éternel est le soutien de ma vie: de qui aurais-je frayeur?",
+      "it": "Il Signore è la mia luce e la mia salvezza; di chi temerò? Il Signore è il baluardo della mia vita; di chi avrò paura?"
+    },
+    {
+      "id": 16,
+      "ref": "1 Corintios 13:4",
+      "es": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece.",
+      "en": "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
+      "pt": "O amor é sofredor, é benigno; o amor não é invejoso; o amor não trata com leviandade, não se ensoberbece.",
+      "fr": "L'amour est patient, il est plein de bonté; l'amour n'est point envieux; l'amour ne se vante point, il ne s'enfle point d'orgueil.",
+      "it": "L'amore è paziente, è benevolo; l'amore non è invidioso, non si vanta, non si gonfia d'orgoglio."
+    },
+    {
+      "id": 17,
+      "ref": "Salmo 91:1",
+      "es": "El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.",
+      "en": "Whoever dwells in the shelter of the Most High will rest in the shadow of the Almighty.",
+      "pt": "Aquele que habita no esconderijo do Altíssimo, à sombra do Onipotente descansará.",
+      "fr": "Celui qui demeure sous l'abri du Très-Haut repose à l'ombre du Tout-Puissant.",
+      "it": "Chi abita al riparo dell'Altissimo riposerà all'ombra dell'Onnipotente."
+    },
+    {
+      "id": 18,
+      "ref": "Efesios 2:8",
+      "es": "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios.",
+      "en": "For it is by grace you have been saved, through faith — and this is not from yourselves, it is the gift of God.",
+      "pt": "Porque pela graça sois salvos, por meio da fé; e isso não vem de vós; é dom de Deus.",
+      "fr": "Car c'est par la grâce que vous êtes sauvés, par le moyen de la foi. Et cela ne vient pas de vous, c'est le don de Dieu.",
+      "it": "Infatti è per grazia che siete stati salvati, mediante la fede; e ciò non viene da voi, è il dono di Dio."
+    },
+    {
+      "id": 19,
+      "ref": "Salmo 119:105",
+      "es": "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.",
+      "en": "Your word is a lamp for my feet, a light on my path.",
+      "pt": "Lâmpada para os meus pés é a tua palavra e luz para o meu caminho.",
+      "fr": "Ta parole est une lampe à mes pieds, et une lumière sur mon sentier.",
+      "it": "La tua parola è una lampada al mio piede e una luce al mio sentiero."
+    },
+    {
+      "id": 20,
+      "ref": "Salmos 37:4",
+      "es": "Deléitate asimismo en Jehová, y él te concederá las peticiones de tu corazón.",
+      "en": "Take delight in the Lord, and he will give you the desires of your heart.",
+      "pt": "Deleita-te também no Senhor, e ele te concederá o que deseja o teu coração.",
+      "fr": "Fais de l'Éternel tes délices, et il te donnera ce que ton coeur désire.",
+      "it": "Prova piacere nel Signore, ed egli ti darà quello che il tuo cuore desidera."
+    }
+  ]
+}
