@@ -52,14 +52,15 @@ const TABS = [
   { code: 'sacramentos', name: 'Sacramentos', icon: '⛪' },
 ];
 
-// Configuración FREE vs PREMIUM
+// Configuración FREE vs PREMIUM (estrategia: gratis generosa, premium = funciones)
 const FREE_LIMITS = {
-  temas: 2,            // Fe + Amor gratis
-  consejos: 30,        // solo 30 consejos en gratis
-  oraciones: 2,        // Padre Nuestro + Ave María
+  temas: 9,            // TODOS los temas gratis (fideliza)
+  consejos: 316,       // todos los consejos gratis
+  oraciones: 8,        // todas las oraciones gratis
   librosGuia: 5,       // solo 5 resúmenes de libros
   planes: 1,           // solo 1 plan
-  idiomasWidget: ['es'], // widget solo español en gratis
+  favoritos: 20,       // 20 favoritos en gratis, ilimitados en premium
+  widgets: 1,          // 1 widget en gratis, avanzados en premium
   conAnuncios: true,
 };
 
@@ -139,16 +140,12 @@ export default function App() {
   };
 
   const changeTheme = (code) => {
-    // En gratis solo se permiten los primeros FREE_LIMITS.temas temas
-    if (!isPremium && !THEMES.slice(0, FREE_LIMITS.temas).some((t) => t.code === code)) {
-      Alert.alert('🔒 Contenido Premium', 'Los temas de versículos son parte de la suscripción Premium. Desbloquea todos los temas por 1€/mes.');
-      return;
-    }
     setTheme(code);
     const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-    pickVerse(day, code);
+    const dayIndex = Math.floor(
+      (now - new Date(now.getFullYear(), 0, 1)) / 86400000
+    );
+    pickVerse(dayIndex, code);
   };
 
   const changeLang = (code) => {
@@ -178,8 +175,8 @@ export default function App() {
   // Alerta de contenido premium
   const showPremiumAlert = (seccion) => {
     Alert.alert(
-      '🔒 Contenido Premium',
-      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 19,99€ pago único para siempre\n• o prueba gratis 3 días\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
+      '✨ Premium',
+      `${seccion} son parte de Premium.\n\n• 2,99€/mes (cancela cuando quieras)\n• 15€/año (2 meses gratis)\n• o 39,99€ pago único para siempre\n• o prueba gratis 3 días\n\nCon Premium: planes de lectura completos, estadísticas, favoritos ilimitados, widgets avanzados, temas visuales y próximas funciones.`,
       [
         { text: 'Ahora no', style: 'cancel' },
         {
@@ -261,7 +258,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea 5 planes de lectura completos con Premium</Text>
-                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
+                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.planes?.map((p) => (
@@ -280,7 +277,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los resúmenes de los 66 libros')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea los resúmenes de los 66 libros de la Biblia</Text>
-                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
+                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.libros?.map((libro) => (
@@ -298,9 +295,6 @@ export default function App() {
         );
 
       case 'oraciones':
-        const oracionesVisibles = isPremium
-          ? (versesData.oraciones || [])
-          : (versesData.oraciones || []).slice(0, FREE_LIMITS.oraciones);
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>🙏 Oración del día</Text>
@@ -311,19 +305,12 @@ export default function App() {
               </View>
             )}
             <Text style={styles.sectionHeader}>📖 Todas las oraciones</Text>
-            {oracionesVisibles.map((o) => (
+            {(versesData.oraciones || []).map((o) => (
               <View key={o.id} style={styles.card}>
                 <Text style={styles.cardTitle}>{o.titulo}</Text>
                 <Text style={styles.cardBody}>{o[lang] || o.es}</Text>
               </View>
             ))}
-            {!isPremium && (
-              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Las 8 oraciones completas')}>
-                <Text style={styles.premiumEmoji}>🔒</Text>
-                <Text style={styles.premiumText}>Desbloquea las 8 oraciones completas (Credo, Salve, Gloria, Acto de Contrición...)</Text>
-                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
-              </TouchableOpacity>
-            )}
           </ScrollView>
         );
 
@@ -344,14 +331,7 @@ export default function App() {
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>⛪ Los Siete Sacramentos</Text>
-            {!isPremium && (
-              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los 7 Sacramentos')}>
-                <Text style={styles.premiumEmoji}>🔒</Text>
-                <Text style={styles.premiumText}>Desbloquea la explicación de los 7 Sacramentos con Premium</Text>
-                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
-              </TouchableOpacity>
-            )}
-            {isPremium && versesData.sacramentos && versesData.sacramentos.map((s) => (
+            {versesData.sacramentos && versesData.sacramentos.map((s) => (
               <View key={s.id} style={styles.card}>
                 <Text style={styles.cardTitle}>✝️ {s.titulo}</Text>
                 <Text style={styles.cardBody}>{s.es}</Text>
@@ -396,8 +376,8 @@ export default function App() {
 
             {!isPremium && (
               <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
-                <Text style={styles.premiumBannerText}>🌟 Disfruta todos los temas, planes y oraciones</Text>
-                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
+                <Text style={styles.premiumBannerText}>✨ Premium: planes de lectura, estadísticas, favoritos ilimitados y más</Text>
+                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
               </TouchableOpacity>
             )}
           </ScrollView>
@@ -443,20 +423,17 @@ export default function App() {
           style={styles.themeBar}
           contentContainerStyle={styles.themeBarContent}
         >
-          {THEMES.map((t) => {
-            const locked = !isPremium && !THEMES.slice(0, FREE_LIMITS.temas).some((x) => x.code === t.code);
-            return (
-              <TouchableOpacity
-                key={t.code}
-                style={[styles.themeChip, theme === t.code && styles.themeChipActive, locked && styles.themeChipLocked]}
-                onPress={() => (locked ? showPremiumAlert('Los temas de versículos') : changeTheme(t.code))}
-              >
-                <Text style={[styles.themeText, theme === t.code && styles.themeTextActive]}>
-                  {locked ? '🔒' : t.icon} {t.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+          {THEMES.map((t) => (
+            <TouchableOpacity
+              key={t.code}
+              style={[styles.themeChip, theme === t.code && styles.themeChipActive]}
+              onPress={() => changeTheme(t.code)}
+            >
+              <Text style={[styles.themeText, theme === t.code && styles.themeTextActive]}>
+                {t.icon} {t.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       )}
 
