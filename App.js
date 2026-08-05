@@ -609,8 +609,8 @@ const styles = StyleSheet.create({
   },
   verseText: {
     color: '#fff',
-    fontSize: 20,
-    lineHeight: 30,
+    fontSize: 16,
+    lineHeight: 25,
     fontStyle: 'italic',
     textAlign: 'center',
   },
