@@ -71,14 +71,14 @@ export default function App() {
   const [dayOfYear, setDayOfYear] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
 
-  // Versículo del día basado en el día del año
+  // Versículo del día basado en el día del año (0-based: 0 = 1 de enero)
   useEffect(() => {
     const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = now - start;
-    const day = Math.floor(diff / (1000 * 60 * 60 * 24));
-    setDayOfYear(day);
-    pickVerse(day);
+    const dayIndex = Math.floor(
+      (now - new Date(now.getFullYear(), 0, 1)) / 86400000
+    );
+    setDayOfYear(dayIndex);
+    pickVerse(dayIndex);
     scheduleDailyNotification();
   }, []);
 
@@ -91,17 +91,18 @@ export default function App() {
       await Notifications.cancelAllScheduledNotificationsAsync();
 
       const now = new Date();
-      const start = new Date(now.getFullYear(), 0, 0);
-      const day = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+      const dayIndex = Math.floor(
+        (now - new Date(now.getFullYear(), 0, 1)) / 86400000
+      );
       const verses = versesData.verses;
-      const todayVerse = verses[day % verses.length];
+      const todayVerse = verses[dayIndex % verses.length];
       const consejos = versesData.consejos || [];
-      const consejo = consejos.length > 0 ? consejos[day % consejos.length] : '';
+      const consejo = consejos.length > 0 ? consejos[dayIndex % consejos.length] : '';
 
       await Notifications.scheduleNotificationAsync({
         content: {
           title: '📖 Versículo del Día',
-          body: `"${todayVerse.es}" — ${todayVerse.ref}${consejo ? `\n💡 ${consejo}` : ''}`,
+          body: `"${todayVerse[lang] || todayVerse.es}" — ${todayVerse.ref}${consejo ? `\n💡 ${consejo}` : ''}`,
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -127,9 +128,14 @@ export default function App() {
   };
 
   const nextVerse = () => {
-    const verses = versesData.verses;
-    const idx = (verses.indexOf(verse) + 1) % verses.length;
-    setVerse(verses[idx]);
+    const allVerses = versesData.verses;
+    let filtered = allVerses;
+    if (theme !== 'fe') {
+      const themed = allVerses.filter((v) => v.theme === theme);
+      if (themed.length > 0) filtered = themed;
+    }
+    const idx = (filtered.indexOf(verse) + 1) % filtered.length;
+    setVerse(filtered[idx]);
   };
 
   const changeTheme = (code) => {
@@ -173,9 +179,16 @@ export default function App() {
   const showPremiumAlert = (seccion) => {
     Alert.alert(
       '🔒 Contenido Premium',
-      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 19,99€ pago único para siempre\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
+      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 19,99€ pago único para siempre\n• o prueba gratis 3 días\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
       [
         { text: 'Ahora no', style: 'cancel' },
+        {
+          text: 'Probar 3 días gratis',
+          onPress: () => {
+            setIsPremium(true);
+            Alert.alert('✨ Prueba activada', 'Disfruta Premium 3 días. Esta demo se conectará a pagos reales con la cuenta de Play Store.');
+          },
+        },
         {
           text: 'Desbloquear (demo)',
           onPress: () => {
@@ -353,6 +366,9 @@ export default function App() {
           <View style={styles.tabContent}>
             {verse && (
               <View style={styles.card}>
+                <Text style={styles.dateLabel}>
+                  📅 {new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : lang, { day: 'numeric', month: 'long' })}
+                </Text>
                 <Text style={styles.cardTitle}>
                   {currentTheme?.icon} Versículo de {currentTheme?.name}
                 </Text>
@@ -375,6 +391,13 @@ export default function App() {
                 <Text style={styles.consejoTitle}>💡 Consejo del día</Text>
                 <Text style={styles.consejoText}>{consejoDelDia}</Text>
                 <Text style={styles.consejoTap}>Toca para compartir →</Text>
+              </TouchableOpacity>
+            )}
+
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
+                <Text style={styles.premiumBannerText}>🌟 Disfruta todos los temas, planes y oraciones</Text>
+                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -556,6 +579,25 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 12,
     textAlign: 'center',
+  },
+  dateLabel: {
+    color: '#a0a0c0',
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  premiumBanner: {
+    backgroundColor: '#2a2a4a',
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#f59e0b',
+  },
+  premiumBannerText: {
+    color: '#fff',
+    fontSize: 14,
+    marginBottom: 4,
   },
   cardBody: {
     color: '#d0d0e0',
