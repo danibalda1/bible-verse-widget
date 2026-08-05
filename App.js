@@ -363,7 +363,7 @@ export default function App() {
       case 'dia':
       default:
         return (
-          <View style={styles.tabContent}>
+          <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
             {verse && (
               <View style={styles.card}>
                 <Text style={styles.dateLabel}>
@@ -400,7 +400,7 @@ export default function App() {
                 <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </ScrollView>
         );
     }
   };
@@ -572,6 +572,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
+    position: 'relative',
+    zIndex: 20,
   },
   cardTitle: {
     color: '#f59e0b',
@@ -623,7 +625,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 20,
-    width: '100%',
+    zIndex: 10,
+    elevation: 6,
   },
   btnSecondary: {
     flex: 1,
@@ -633,6 +636,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#2a2a4a',
     alignItems: 'center',
+    zIndex: 10,
+    elevation: 6,
   },
   btnSecondaryText: {
     color: '#fff',
@@ -648,6 +653,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#e94560',
     alignItems: 'center',
     marginTop: 0,
+    zIndex: 10,
+    elevation: 6,
   },
   btnPrimaryText: {
     color: '#fff',
@@ -658,9 +665,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#2a2a4a',
     borderRadius: 16,
     padding: 20,
+    marginTop: 4,
     marginBottom: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#f59e0b',
+    zIndex: 1,
   },
   consejoTitle: {
     color: '#f59e0b',
