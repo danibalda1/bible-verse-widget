@@ -173,7 +173,7 @@ export default function App() {
   const showPremiumAlert = (seccion) => {
     Alert.alert(
       '🔒 Contenido Premium',
-      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 25€ pago único para siempre\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
+      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 19,99€ pago único para siempre\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
       [
         { text: 'Ahora no', style: 'cancel' },
         {
@@ -248,7 +248,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea 5 planes de lectura completos con Premium</Text>
-                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.planes?.map((p) => (
@@ -267,7 +267,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los resúmenes de los 66 libros')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea los resúmenes de los 66 libros de la Biblia</Text>
-                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.libros?.map((libro) => (
@@ -308,7 +308,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Las 8 oraciones completas')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea las 8 oraciones completas (Credo, Salve, Gloria, Acto de Contrición...)</Text>
-                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
           </ScrollView>
@@ -335,7 +335,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los 7 Sacramentos')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea la explicación de los 7 Sacramentos con Premium</Text>
-                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+                <Text style={styles.premiumCta}>1€/mes o 19,99€ para siempre →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.sacramentos && versesData.sacramentos.map((s) => (
@@ -579,15 +579,18 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 12,
+    justifyContent: 'space-between',
     marginTop: 20,
+    width: '100%',
   },
   btnSecondary: {
+    flex: 1,
+    marginRight: 6,
     paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: '#2a2a4a',
+    alignItems: 'center',
   },
   btnSecondaryText: {
     color: '#fff',
@@ -595,12 +598,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   btnPrimary: {
+    flex: 1,
+    marginLeft: 6,
     paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: '#e94560',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 0,
   },
   btnPrimaryText: {
     color: '#fff',
