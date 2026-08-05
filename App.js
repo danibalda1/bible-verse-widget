@@ -46,10 +46,22 @@ const THEMES = [
 const TABS = [
   { code: 'dia', name: 'De hoy', icon: '📅' },
   { code: 'consejo', name: 'Consejo', icon: '💡' },
+  { code: 'guia', name: 'Guía', icon: '📚' },
   { code: 'oraciones', name: 'Oraciones', icon: '🙏' },
   { code: 'mandamientos', name: 'Los 10', icon: '📜' },
   { code: 'sacramentos', name: 'Sacramentos', icon: '⛪' },
 ];
+
+// Configuración FREE vs PREMIUM
+const FREE_LIMITS = {
+  temas: 2,            // Fe + Amor gratis
+  consejos: 30,        // solo 30 consejos en gratis
+  oraciones: 2,        // Padre Nuestro + Ave María
+  librosGuia: 5,       // solo 5 resúmenes de libros
+  planes: 1,           // solo 1 plan
+  idiomasWidget: ['es'], // widget solo español en gratis
+  conAnuncios: true,
+};
 
 export default function App() {
   const [lang, setLang] = useState('es');
@@ -57,6 +69,7 @@ export default function App() {
   const [tab, setTab] = useState('dia');
   const [verse, setVerse] = useState(null);
   const [dayOfYear, setDayOfYear] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
 
   // Versículo del día basado en el día del año
   useEffect(() => {
@@ -120,6 +133,11 @@ export default function App() {
   };
 
   const changeTheme = (code) => {
+    // En gratis solo se permiten los primeros FREE_LIMITS.temas temas
+    if (!isPremium && !THEMES.slice(0, FREE_LIMITS.temas).some((t) => t.code === code)) {
+      Alert.alert('🔒 Contenido Premium', 'Los temas de versículos son parte de la suscripción Premium. Desbloquea todos los temas por 1€/mes.');
+      return;
+    }
     setTheme(code);
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
@@ -150,6 +168,24 @@ export default function App() {
 
   const currentLang = LANGUAGES.find((l) => l.code === lang);
   const currentTheme = THEMES.find((t) => t.code === theme);
+
+  // Alerta de contenido premium
+  const showPremiumAlert = (seccion) => {
+    Alert.alert(
+      '🔒 Contenido Premium',
+      `${seccion} son parte de Premium.\n\n• 1€/mes (cancela cuando quieras)\n• o 25€ pago único para siempre\n\nDesbloquea: todos los temas, 316 consejos, 8 oraciones, guía completa de la Biblia y widget multilingüe.`,
+      [
+        { text: 'Ahora no', style: 'cancel' },
+        {
+          text: 'Desbloquear (demo)',
+          onPress: () => {
+            setIsPremium(true);
+            Alert.alert('✨ Premium activado', 'Modo demo: así se ve la versión de pago.');
+          },
+        },
+      ]
+    );
+  };
 
   // Consejo del día
   const consejoDelDia = versesData.consejos && versesData.consejos.length > 0
@@ -190,7 +226,68 @@ export default function App() {
           </ScrollView>
         );
 
+      case 'guia':
+        return (
+          <ScrollView contentContainerStyle={styles.tabContent}>
+            <Text style={styles.sectionHeader}>📚 Guía de lectura de la Biblia</Text>
+
+            {/* Guía de inicio */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>{versesData.guia_inicio?.titulo}</Text>
+              {versesData.guia_inicio?.pasos.map((p, i) => (
+                <View key={i} style={styles.guiaPaso}>
+                  <Text style={styles.guiaPasoTitle}>{p.titulo}</Text>
+                  <Text style={styles.guiaPasoText}>{p.texto}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Planes de lectura (premium) */}
+            <Text style={styles.sectionHeader}>🗓️ Planes de lectura</Text>
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Desbloquea 5 planes de lectura completos con Premium</Text>
+                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+              </TouchableOpacity>
+            )}
+            {isPremium && versesData.planes?.map((p) => (
+              <View key={p.id} style={styles.card}>
+                <Text style={styles.cardTitle}>{p.titulo} · {p.duracion}</Text>
+                <Text style={styles.cardBody}>{p.descripcion}</Text>
+                {p.pasos.map((paso, i) => (
+                  <Text key={i} style={styles.planPaso}>• {paso}</Text>
+                ))}
+              </View>
+            ))}
+
+            {/* Resúmenes de libros (premium) */}
+            <Text style={styles.sectionHeader}>📖 Resúmenes de los 66 libros</Text>
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los resúmenes de los 66 libros')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Desbloquea los resúmenes de los 66 libros de la Biblia</Text>
+                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+              </TouchableOpacity>
+            )}
+            {isPremium && versesData.libros?.map((libro) => (
+              <View key={libro.id} style={styles.listCard}>
+                <Text style={styles.libroNum}>{libro.id}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.libroTitle}>
+                    {libro.libro} <Text style={styles.libroTest}>[{libro.testamento}]</Text>
+                  </Text>
+                  <Text style={styles.libroResumen}>{libro.resumen}</Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+        );
+
       case 'oraciones':
+        const oracionesVisibles = isPremium
+          ? (versesData.oraciones || [])
+          : (versesData.oraciones || []).slice(0, FREE_LIMITS.oraciones);
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>🙏 Oración del día</Text>
@@ -201,12 +298,19 @@ export default function App() {
               </View>
             )}
             <Text style={styles.sectionHeader}>📖 Todas las oraciones</Text>
-            {versesData.oraciones && versesData.oraciones.map((o) => (
+            {oracionesVisibles.map((o) => (
               <View key={o.id} style={styles.card}>
                 <Text style={styles.cardTitle}>{o.titulo}</Text>
                 <Text style={styles.cardBody}>{o[lang] || o.es}</Text>
               </View>
             ))}
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Las 8 oraciones completas')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Desbloquea las 8 oraciones completas (Credo, Salve, Gloria, Acto de Contrición...)</Text>
+                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         );
 
@@ -227,7 +331,14 @@ export default function App() {
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>⛪ Los Siete Sacramentos</Text>
-            {versesData.sacramentos && versesData.sacramentos.map((s) => (
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los 7 Sacramentos')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Desbloquea la explicación de los 7 Sacramentos con Premium</Text>
+                <Text style={styles.premiumCta}>1€/mes o 25€ para siempre →</Text>
+              </TouchableOpacity>
+            )}
+            {isPremium && versesData.sacramentos && versesData.sacramentos.map((s) => (
               <View key={s.id} style={styles.card}>
                 <Text style={styles.cardTitle}>✝️ {s.titulo}</Text>
                 <Text style={styles.cardBody}>{s.es}</Text>
@@ -309,17 +420,20 @@ export default function App() {
           style={styles.themeBar}
           contentContainerStyle={styles.themeBarContent}
         >
-          {THEMES.map((t) => (
-            <TouchableOpacity
-              key={t.code}
-              style={[styles.themeChip, theme === t.code && styles.themeChipActive]}
-              onPress={() => changeTheme(t.code)}
-            >
-              <Text style={[styles.themeText, theme === t.code && styles.themeTextActive]}>
-                {t.icon} {t.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {THEMES.map((t) => {
+            const locked = !isPremium && !THEMES.slice(0, FREE_LIMITS.temas).some((x) => x.code === t.code);
+            return (
+              <TouchableOpacity
+                key={t.code}
+                style={[styles.themeChip, theme === t.code && styles.themeChipActive, locked && styles.themeChipLocked]}
+                onPress={() => (locked ? showPremiumAlert('Los temas de versículos') : changeTheme(t.code))}
+              >
+                <Text style={[styles.themeText, theme === t.code && styles.themeTextActive]}>
+                  {locked ? '🔒' : t.icon} {t.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       )}
 
@@ -406,6 +520,9 @@ const styles = StyleSheet.create({
   },
   themeChipActive: {
     backgroundColor: '#f59e0b',
+  },
+  themeChipLocked: {
+    opacity: 0.5,
   },
   themeText: {
     color: '#a0a0c0',
@@ -521,6 +638,73 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 8,
     marginBottom: 10,
+  },
+  premiumCard: {
+    backgroundColor: '#2a2a4a',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#f59e0b',
+    alignItems: 'center',
+  },
+  premiumEmoji: {
+    fontSize: 28,
+    marginBottom: 8,
+  },
+  premiumText: {
+    color: '#fff',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  premiumCta: {
+    color: '#f59e0b',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 10,
+  },
+  guiaPaso: {
+    marginBottom: 12,
+  },
+  guiaPasoTitle: {
+    color: '#f59e0b',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  guiaPasoText: {
+    color: '#d0d0e0',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  planPaso: {
+    color: '#d0d0e0',
+    fontSize: 13,
+    lineHeight: 20,
+    marginTop: 6,
+  },
+  libroNum: {
+    color: '#f59e0b',
+    fontSize: 14,
+    fontWeight: '700',
+    width: 28,
+  },
+  libroTitle: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  libroTest: {
+    color: '#a0a0c0',
+    fontSize: 11,
+    fontWeight: '400',
+  },
+  libroResumen: {
+    color: '#d0d0e0',
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 4,
   },
   listCard: {
     flexDirection: 'row',

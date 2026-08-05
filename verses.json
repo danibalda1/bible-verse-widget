@@ -1865,5 +1865,570 @@
   "Hoy, vive con esperanza: el cielo nos espera.",
   "Sé agradecido por todo: es voluntad de Dios en Cristo Jesús.",
   "Hoy, haz el bien con alegría y generosidad."
- ]
+ ],
+ "libros": [
+  {
+   "id": 1,
+   "libro": "Génesis",
+   "testamento": "AT",
+   "capitulos": 50,
+   "resumen": "El libro de los orígenes: la creación del mundo, la caída del hombre, el diluvio y el llamado de Abraham. Narra la historia de los patriarcas: Abraham, Isaac, Jacob y José. Muestra cómo Dios inicia su plan de salvación con un pueblo elegido."
+  },
+  {
+   "id": 2,
+   "libro": "Éxodo",
+   "testamento": "AT",
+   "capitulos": 40,
+   "resumen": "Dios libera a Israel de la esclavitud en Egipto por medio de Moisés. Incluye las diez plagas, el paso del Mar Rojo y la entrega de los Diez Mandamientos en el Sinaí. Narra el pacto de Dios con su pueblo y la construcción del tabernáculo."
+  },
+  {
+   "id": 3,
+   "libro": "Levítico",
+   "testamento": "AT",
+   "capitulos": 27,
+   "resumen": "Manual de santidad y adoración para Israel. Detalla las leyes de sacrificios, sacerdocio y pureza. Enseña que Dios es santo y quiere un pueblo santo."
+  },
+  {
+   "id": 4,
+   "libro": "Números",
+   "testamento": "AT",
+   "capitulos": 36,
+   "resumen": "Narra los 40 años de peregrinación de Israel por el desierto y los censos del pueblo. Muestra la fidelidad de Dios y la infidelidad del pueblo. Incluye el famoso censo y las pruebas del desierto."
+  },
+  {
+   "id": 5,
+   "libro": "Deuteronomio",
+   "testamento": "AT",
+   "capitulos": 34,
+   "resumen": "El segundo discurso de Moisés antes de entrar en la Tierra Prometida. Recuerda la ley de Dios y renueva el pacto con la nueva generación. Destaca el amor a Dios como respuesta a su amor."
+  },
+  {
+   "id": 6,
+   "libro": "Josué",
+   "testamento": "AT",
+   "capitulos": 24,
+   "resumen": "Israel entra y conquista la Tierra Prometida bajo el liderazgo de Josué. Narra la caída de Jericó y la repartición de la tierra entre las tribus. 'Esfuérzate y sé valiente' es su lema."
+  },
+  {
+   "id": 7,
+   "libro": "Jueces",
+   "testamento": "AT",
+   "capitulos": 21,
+   "resumen": "Ciclo de pecado, opresión, arrepentimiento y liberación en Israel. Dios levanta jueces como Gedeón, Débora y Sansón. Muestra la necesidad de un rey fiel."
+  },
+  {
+   "id": 8,
+   "libro": "Rut",
+   "testamento": "AT",
+   "capitulos": 4,
+   "resumen": "Historia de amor y fidelidad: Rut, una moabita, permanece junto a su suegra Noemí. Dios la recompensa y se convierte en bisabuela del rey David. Muestra la providencia divina en lo cotidiano."
+  },
+  {
+   "id": 9,
+   "libro": "1 Samuel",
+   "testamento": "AT",
+   "capitulos": 31,
+   "resumen": "Del juez Samuel al primer rey de Israel, Saúl. Incluye la unción de David y su victoria sobre Goliat. Narra la transición de teocracia a monarquía."
+  },
+  {
+   "id": 10,
+   "libro": "2 Samuel",
+   "testamento": "AT",
+   "capitulos": 24,
+   "resumen": "El reinado de David: sus triunfos, su pecado con Betsabé y su arrepentimiento. Muestra la misericordia de Dios y las consecuencias del pecado."
+  },
+  {
+   "id": 11,
+   "libro": "1 Reyes",
+   "testamento": "AT",
+   "capitulos": 22,
+   "resumen": "Salomón sucede a David, construye el templo, pero su corazón se desvía. Narra la división del reino en Israel y Judá. Empieza el ministerio de Elías."
+  },
+  {
+   "id": 12,
+   "libro": "2 Reyes",
+   "testamento": "AT",
+   "capitulos": 25,
+   "resumen": "La caída de Israel y Judá por la infidelidad al pacto. Narra el ministerio de Eliseo y de los profetas. Termina con el exilio en Babilonia."
+  },
+  {
+   "id": 13,
+   "libro": "1 Crónicas",
+   "testamento": "AT",
+   "capitulos": 29,
+   "resumen": "Genealogías desde Adán hasta David y el reinado de David centrado en la adoración. Prepara la construcción del templo. Recuerda al pueblo exiliado sus raíces."
+  },
+  {
+   "id": 14,
+   "libro": "2 Crónicas",
+   "testamento": "AT",
+   "capitulos": 36,
+   "resumen": "La historia de los reyes de Judá y el templo. Destaca que la fidelidad trae bendición y la infidelidad, juicio. Termina con el decreto de Ciro para reconstruir el templo."
+  },
+  {
+   "id": 15,
+   "libro": "Esdras",
+   "testamento": "AT",
+   "capitulos": 10,
+   "resumen": "El regreso del exilio y la reconstrucción del templo. Esdras, sacerdote y escriba, restaura la ley de Dios en el pueblo."
+  },
+  {
+   "id": 16,
+   "libro": "Nehemías",
+   "testamento": "AT",
+   "capitulos": 13,
+   "resumen": "Nehemías reconstruye los muros de Jerusalén en 52 días a pesar de la oposición. Combina oración, liderazgo y trabajo. La reforma espiritual acompaña la reconstrucción física."
+  },
+  {
+   "id": 17,
+   "libro": "Ester",
+   "testamento": "AT",
+   "capitulos": 10,
+   "resumen": "Una joven judía se convierte en reina de Persia y salva a su pueblo del exterminio. Dios actúa en la sombra sin ser mencionado explícitamente. La valentía y la providencia se unen."
+  },
+  {
+   "id": 18,
+   "libro": "Job",
+   "testamento": "AT",
+   "capitulos": 42,
+   "resumen": "Un hombre justo que pierde todo y pregunta por qué. Dios responde revelando su soberanía. Enseña que la fe no se basa en las circunstancias sino en Dios mismo."
+  },
+  {
+   "id": 19,
+   "libro": "Salmos",
+   "testamento": "AT",
+   "capitulos": 150,
+   "resumen": "El himnario de Israel: oraciones, alabanzas y lamentos. Expresa toda la gama de emociones humanas ante Dios. Los salmos más conocidos: 23, 27, 51, 91, 121, 139."
+  },
+  {
+   "id": 20,
+   "libro": "Proverbios",
+   "testamento": "AT",
+   "capitulos": 31,
+   "resumen": "Sabiduría práctica para la vida diaria: trabajo, dinero, familia y palabras. 'El temor de Jehová es el principio de la sabiduría'. Ideal para leer un capítulo al día."
+  },
+  {
+   "id": 21,
+   "libro": "Eclesiastés",
+   "testamento": "AT",
+   "capitulos": 12,
+   "resumen": "Reflexión sobre el sentido de la vida: 'Vanidad de vanidades'. La felicidad no está en las posesiones ni el placer. Conclusión: teme a Dios y guarda sus mandamientos."
+  },
+  {
+   "id": 22,
+   "libro": "Cantares",
+   "testamento": "AT",
+   "capitulos": 8,
+   "resumen": "Poema de amor entre esposos que celebra el amor conyugal. Tradicionalmente visto como símbolo del amor entre Dios y su pueblo, y Cristo y la Iglesia."
+  },
+  {
+   "id": 23,
+   "libro": "Isaías",
+   "testamento": "AT",
+   "capitulos": 66,
+   "resumen": "El profeta más citado en el Nuevo Testamento. Anuncia juicio y consuelo, y profetiza al Mesías (cap. 53). 'He aquí la virgen concebirá y dará a luz un hijo'."
+  },
+  {
+   "id": 24,
+   "libro": "Jeremías",
+   "testamento": "AT",
+   "capitulos": 52,
+   "resumen": "El profeta llorón que anuncia la caída de Jerusalén. Incluye la promesa de un nuevo pacto escrito en el corazón. 'Porque yo sé los pensamientos que tengo acerca de vosotros'."
+  },
+  {
+   "id": 25,
+   "libro": "Lamentaciones",
+   "testamento": "AT",
+   "capitulos": 5,
+   "resumen": "Cinco poemas de luto por la destrucción de Jerusalén. En medio del dolor brilla la esperanza: 'Las misericordias del Señor son nuevas cada mañana'."
+  },
+  {
+   "id": 26,
+   "libro": "Ezequiel",
+   "testamento": "AT",
+   "capitulos": 48,
+   "resumen": "Visiones asombrosas: la gloria de Dios, los huesos secos que reviven, el nuevo templo. Llamado a ser centinela de Israel. Dios promete un corazón nuevo."
+  },
+  {
+   "id": 27,
+   "libro": "Daniel",
+   "testamento": "AT",
+   "capitulos": 12,
+   "resumen": "Fidelidad en el exilio: Daniel en el foso de los leones, los tres jóvenes en el horno. Visiones proféticas sobre los reinos del mundo y el reino eterno de Dios."
+  },
+  {
+   "id": 28,
+   "libro": "Oseas",
+   "testamento": "AT",
+   "capitulos": 14,
+   "resumen": "El matrimonio de Oseas con una esposa infiel simboliza el amor incondicional de Dios por Israel. 'Los amaré de pura gracia'. Dios perdona y restaura."
+  },
+  {
+   "id": 29,
+   "libro": "Joel",
+   "testamento": "AT",
+   "capitulos": 3,
+   "resumen": "Una plaga de langostas anuncia el día del Señor. Promesa del derramamiento del Espíritu Santo: 'Derramaré mi Espíritu sobre toda carne'."
+  },
+  {
+   "id": 30,
+   "libro": "Amós",
+   "testamento": "AT",
+   "capitulos": 9,
+   "resumen": "El profeta del campo denuncia la injusticia social: 'Corra el juicio como las aguas'. Dios exige justicia, no solo rituales."
+  },
+  {
+   "id": 31,
+   "libro": "Abdías",
+   "testamento": "AT",
+   "capitulos": 1,
+   "resumen": "El libro más corto del Antiguo Testamento. Anuncia el juicio sobre Edom por su orgullo y su maltrato a Israel."
+  },
+  {
+   "id": 32,
+   "libro": "Jonás",
+   "testamento": "AT",
+   "capitulos": 4,
+   "resumen": "Dios envía a Jonás a Nínive; huye, es tragado por un gran pez y finalmente obedece. La ciudad se arrepiente. Muestra la misericordia de Dios hacia todos los pueblos."
+  },
+  {
+   "id": 33,
+   "libro": "Miqueas",
+   "testamento": "AT",
+   "capitulos": 7,
+   "resumen": "Denuncia el pecado y anuncia el nacimiento del Mesías en Belén. 'Oh hombre, él te ha declarado lo que es bueno: hacer justicia, amar misericordia y humillarte ante Dios'."
+  },
+  {
+   "id": 34,
+   "libro": "Nahúm",
+   "testamento": "AT",
+   "capitulos": 3,
+   "resumen": "Anuncia la caída de Nínive, la ciudad que se había arrepentido en tiempos de Jonás pero volvió a la violencia. Dios es lento para la ira pero justo."
+  },
+  {
+   "id": 35,
+   "libro": "Habacuc",
+   "testamento": "AT",
+   "capitulos": 3,
+   "resumen": "El profeta pregunta a Dios por qué permite la injusticia. Dios responde y Habacuc termina alabando: 'Aunque la higuera no florezca... me gozaré en el Señor'."
+  },
+  {
+   "id": 36,
+   "libro": "Sofonías",
+   "testamento": "AT",
+   "capitulos": 3,
+   "resumen": "Anuncia el día del Señor como juicio, pero también como esperanza. Dios se regocija por su pueblo: 'Se gozará sobre ti con alegría'."
+  },
+  {
+   "id": 37,
+   "libro": "Hageo",
+   "testamento": "AT",
+   "capitulos": 2,
+   "resumen": "Tras el exilio, insta al pueblo a reconstruir el templo. 'Considerad vuestros caminos'. La prioridad de Dios es restaurar su casa."
+  },
+  {
+   "id": 38,
+   "libro": "Zacarías",
+   "testamento": "AT",
+   "capitulos": 14,
+   "resumen": "Visiones que animan a reconstruir el templo y anuncian al Mesías: la entrada triunfal, el pastor herido. 'No con ejército ni con fuerza, sino con mi Espíritu'."
+  },
+  {
+   "id": 39,
+   "libro": "Malaquías",
+   "testamento": "AT",
+   "capitulos": 4,
+   "resumen": "El último profeta del Antiguo Testamento. Denuncia la tibieza y anuncia la venida del mensajero. Termina con la promesa de Elías antes del gran día del Señor."
+  },
+  {
+   "id": 40,
+   "libro": "Mateo",
+   "testamento": "NT",
+   "capitulos": 28,
+   "resumen": "Presenta a Jesús como el Mesías prometido y Rey. Incluye el Sermón del Monte, las parábolas del reino y la Gran Comisión. Cita el Antiguo Testamento constantemente."
+  },
+  {
+   "id": 41,
+   "libro": "Marcos",
+   "testamento": "NT",
+   "capitulos": 16,
+   "resumen": "El evangelio más breve y dinámico: Jesús en acción. Muestra al Siervo sufriente. Ideal para una primera lectura: se lee en una tarde."
+  },
+  {
+   "id": 42,
+   "libro": "Lucas",
+   "testamento": "NT",
+   "capitulos": 24,
+   "resumen": "El evangelio de la misericordia, escrito por un médico. Detalla la infancia de Jesús y sus parábolas más famosas: el buen samaritano, el hijo pródigo."
+  },
+  {
+   "id": 43,
+   "libro": "Juan",
+   "testamento": "NT",
+   "capitulos": 21,
+   "resumen": "El evangelio del amor y de la divinidad de Jesús: 'En el principio era el Verbo'. Siete señales, siete 'Yo soy'. Invita a creer en Jesús como Hijo de Dios."
+  },
+  {
+   "id": 44,
+   "libro": "Hechos",
+   "testamento": "NT",
+   "capitulos": 28,
+   "resumen": "La historia de la Iglesia primitiva: Pentecostés, Pedro, Esteban, Pablo. El Evangelio se extiende de Jerusalén a Roma. La acción del Espíritu Santo en acción."
+  },
+  {
+   "id": 45,
+   "libro": "Romanos",
+   "testamento": "NT",
+   "capitulos": 16,
+   "resumen": "La carta más teológica de Pablo: todos pecaron, la justificación por la fe, la vida en el Espíritu. 'No me avergüenzo del evangelio, porque es poder de Dios'."
+  },
+  {
+   "id": 46,
+   "libro": "1 Corintios",
+   "testamento": "NT",
+   "capitulos": 16,
+   "resumen": "Pablo corrige problemas en la iglesia de Corinto: divisiones, inmoralidad, abusos en la cena. Incluye el himno del amor (cap. 13) y la resurrección (cap. 15)."
+  },
+  {
+   "id": 47,
+   "libro": "2 Corintios",
+   "testamento": "NT",
+   "capitulos": 13,
+   "resumen": "Carta personal y apasionada. Pablo defiende su apostolado y habla de la gracia en la debilidad: 'Bástate mi gracia, porque mi poder se perfecciona en la debilidad'."
+  },
+  {
+   "id": 48,
+   "libro": "Gálatas",
+   "testamento": "NT",
+   "capitulos": 6,
+   "resumen": "La carta de la libertad cristiana: no somos justificados por obras sino por la fe en Cristo. 'Para libertad fuisteis llamados'. El fruto del Espíritu (cap. 5)."
+  },
+  {
+   "id": 49,
+   "libro": "Efesios",
+   "testamento": "NT",
+   "capitulos": 6,
+   "resumen": "La iglesia como cuerpo de Cristo y la armadura de Dios (cap. 6). 'Por gracia sois salvos por medio de la fe'. Misterio de la unidad entre judíos y gentiles."
+  },
+  {
+   "id": 50,
+   "libro": "Filipenses",
+   "testamento": "NT",
+   "capitulos": 4,
+   "resumen": "La carta de la alegría, escrita desde la cárcel. 'Todo lo puedo en Cristo que me fortalece'. Aprender a estar contento en toda circunstancia."
+  },
+  {
+   "id": 51,
+   "libro": "Colosenses",
+   "testamento": "NT",
+   "capitulos": 4,
+   "resumen": "Jesús es la plenitud de Dios: 'En él habita corporalmente toda la plenitud de la Deidad'. Advierte contra filosofías vacías. Cristo es suficiente."
+  },
+  {
+   "id": 52,
+   "libro": "1 Tesalonicenses",
+   "testamento": "NT",
+   "capitulos": 5,
+   "resumen": "Carta de aliento a una iglesia joven. Habla de la esperanza de la venida del Señor. 'Estad siempre gozosos, orad sin cesar, dad gracias en todo'."
+  },
+  {
+   "id": 53,
+   "libro": "2 Tesalonicenses",
+   "testamento": "NT",
+   "capitulos": 3,
+   "resumen": "Aclara malentendidos sobre la segunda venida de Cristo y corrige la ociosidad. 'Si alguno no quiere trabajar, tampoco coma'. Perseverancia en la verdad."
+  },
+  {
+   "id": 54,
+   "libro": "1 Timoteo",
+   "testamento": "NT",
+   "capitulos": 6,
+   "resumen": "Instrucciones de Pablo al joven pastor Timoteo para la vida de la iglesia: oración, líderes, sana doctrina. 'Ejercítate para la piedad'."
+  },
+  {
+   "id": 55,
+   "libro": "2 Timoteo",
+   "testamento": "NT",
+   "capitulos": 4,
+   "resumen": "El testamento espiritual de Pablo, escrito antes de su martirio. 'He peleado la buena batalla'. Anima a Timoteo a predicar la Palabra con perseverancia."
+  },
+  {
+   "id": 56,
+   "libro": "Tito",
+   "testamento": "NT",
+   "capitulos": 3,
+   "resumen": "Instrucciones para organizar iglesias en Creta. Las buenas obras como fruto de la gracia de Dios, que nos enseña a vivir sobria y rectamente."
+  },
+  {
+   "id": 57,
+   "libro": "Filemón",
+   "testamento": "NT",
+   "capitulos": 1,
+   "resumen": "Carta breve que pide a Filemón que reciba a su esclavo Onésimo como hermano en Cristo. La fe transforma las relaciones."
+  },
+  {
+   "id": 58,
+   "libro": "Hebreos",
+   "testamento": "NT",
+   "capitulos": 13,
+   "resumen": "Cristo es superior a todo: a los ángeles, a Moisés, a los sacrificios. Es el sumo sacerdote perfecto. El capítulo 11: el salón de la fe. 'Jesucristo es el mismo ayer, hoy y siempre'."
+  },
+  {
+   "id": 59,
+   "libro": "Santiago",
+   "testamento": "NT",
+   "capitulos": 5,
+   "resumen": "Fe práctica: 'La fe sin obras está muerta'. Controlar la lengua, sabiduría de lo alto, oración del justo. Carta muy práctica para vivir el cristianismo."
+  },
+  {
+   "id": 60,
+   "libro": "1 Pedro",
+   "testamento": "NT",
+   "capitulos": 5,
+   "resumen": "Esperanza y santidad en medio del sufrimiento. 'Echad toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros'. El sufrimiento purifica la fe."
+  },
+  {
+   "id": 61,
+   "libro": "2 Pedro",
+   "testamento": "NT",
+   "capitulos": 3,
+   "resumen": "Advertencia contra los falsos maestros y la certeza del regreso de Cristo. 'Creced en la gracia y el conocimiento de nuestro Señor y Salvador'."
+  },
+  {
+   "id": 62,
+   "libro": "1 Juan",
+   "testamento": "NT",
+   "capitulos": 5,
+   "resumen": "Carta del amor: Dios es amor, caminar en luz, la seguridad de la salvación. 'Dios es amor; y el que permanece en amor, permanece en Dios'."
+  },
+  {
+   "id": 63,
+   "libro": "2 Juan",
+   "testamento": "NT",
+   "capitulos": 1,
+   "resumen": "Carta breve: caminar en verdad y amor, y no dar hospitalidad a los falsos maestros."
+  },
+  {
+   "id": 64,
+   "libro": "3 Juan",
+   "testamento": "NT",
+   "capitulos": 1,
+   "resumen": "Carta breve que elogia a Gayo por su hospitalidad y advierte contra Diótrefes. 'No imites lo malo, sino lo bueno'."
+  },
+  {
+   "id": 65,
+   "libro": "Judas",
+   "testamento": "NT",
+   "capitulos": 1,
+   "resumen": "Advertencia urgente contra falsos maestros. 'Manteneos en el amor de Dios'. Termina con una de las doxologías más hermosas de la Biblia."
+  },
+  {
+   "id": 66,
+   "libro": "Apocalipsis",
+   "testamento": "NT",
+   "capitulos": 22,
+   "resumen": "Visiones del fin: la victoria final de Cristo, los nuevos cielos y nueva tierra. 'Yo soy el Alfa y la Omega'. Termina con la invitación: 'Ven, Señor Jesús'."
+  }
+ ],
+ "planes": [
+  {
+   "id": 1,
+   "titulo": "Evangelios en 30 días",
+   "duracion": "30 días",
+   "descripcion": "Lee Mateo, Marcos, Lucas y Juan en un mes. El mejor punto de partida: conoce la vida, enseñanzas, muerte y resurrección de Jesús.",
+   "pasos": [
+    "Día 1-10: Evangelio de Mateo (3 capítulos/día aprox.)",
+    "Día 11-16: Evangelio de Marcos (3 capítulos/día)",
+    "Día 17-25: Evangelio de Lucas (3 capítulos/día)",
+    "Día 26-30: Evangelio de Juan (4 capítulos/día)"
+   ]
+  },
+  {
+   "id": 2,
+   "titulo": "Nuevo Testamento en 90 días",
+   "duracion": "90 días",
+   "descripcion": "Todo el Nuevo Testamento en tres meses. Ideal después de los Evangelios: Hechos, las cartas de Pablo y el Apocalipsis.",
+   "pasos": [
+    "Día 1-30: Los 4 Evangelios",
+    "Día 31-37: Hechos de los Apóstoles",
+    "Día 38-52: Cartas de Pablo (Romanos a Filemón)",
+    "Día 53-60: Hebreos, Santiago, Pedro, Juan y Judas",
+    "Día 61-67: Apocalipsis",
+    "Días de repaso: medita en lo leído"
+   ]
+  },
+  {
+   "id": 3,
+   "titulo": "Biblia completa en 1 año",
+   "duracion": "365 días",
+   "descripcion": "El plan clásico: lecturas diarias del Antiguo y Nuevo Testamento. En un año recorres toda la Biblia.",
+   "pasos": [
+    "Enero-Marzo: Pentateuco, Josué, Jueces, Rut",
+    "Abril-Junio: Samuel, Reyes, Crónicas, Esdras, Nehemías, Ester",
+    "Julio-Septiembre: Job, Salmos, Proverbios, Eclesiastés, Cantares, Profetas",
+    "Octubre-Diciembre: Los 4 Evangelios, Hechos, Cartas, Apocalipsis",
+    "Día 1: Génesis 1-2 + Mateo 1",
+    "Día 365: Apocalipsis 22 + Salmo 150"
+   ]
+  },
+  {
+   "id": 4,
+   "titulo": "Salmos y Proverbios en 60 días",
+   "duracion": "60 días",
+   "descripcion": "El plan del sabio: un salmo y un capítulo de Proverbios al día. Sabiduría práctica y oración para tu vida diaria.",
+   "pasos": [
+    "Día 1-31: Un salmo + un capítulo de Proverbios al día",
+    "Día 32-60: Dos salmos + un capítulo de Proverbios al día",
+    "Termina con Salmo 150: 'Todo lo que respira alabe al Señor'"
+   ]
+  },
+  {
+   "id": 5,
+   "titulo": "Los 7 'Yo soy' de Jesús",
+   "duracion": "7 días",
+   "descripcion": "Plan temático sobre las declaraciones de Jesús en el Evangelio de Juan. Conoce quién es Cristo.",
+   "pasos": [
+    "Día 1: 'Yo soy el pan de vida' (Juan 6:35)",
+    "Día 2: 'Yo soy la luz del mundo' (Juan 8:12)",
+    "Día 3: 'Yo soy la puerta' (Juan 10:9)",
+    "Día 4: 'Yo soy el buen pastor' (Juan 10:11)",
+    "Día 5: 'Yo soy la resurrección y la vida' (Juan 11:25)",
+    "Día 6: 'Yo soy el camino, la verdad y la vida' (Juan 14:6)",
+    "Día 7: 'Yo soy la vid verdadera' (Juan 15:1)"
+   ]
+  }
+ ],
+ "guia_inicio": {
+  "titulo": "¿Cómo empezar a leer la Biblia?",
+  "introduccion": "Leer la Biblia parece difícil, pero no lo es. No necesitas empezar por el Génesis ni entenderlo todo. Aquí tienes un método sencillo en 5 pasos.",
+  "pasos": [
+   {
+    "titulo": "1. Empieza por el Evangelio de Marcos",
+    "texto": "Es el más corto y dinámico. Léelo de una vez o en 3-4 días. Te dará una visión clara de quién es Jesús y qué hizo por ti."
+   },
+   {
+    "titulo": "2. Lee 10 minutos al día, todos los días",
+    "texto": "Mejor 10 minutos diarios que 2 horas un domingo. La constancia crea el hábito. Usa el plan 'Evangelios en 30 días' de la app."
+   },
+   {
+    "titulo": "3. Usa el método LPA (Lee, Piensa, Aplica)",
+    "texto": "LEE el pasaje despacio. PIENSA: ¿qué dice Dios aquí? ¿qué me enseña sobre Él? APLICA: ¿qué puedo hacer hoy en mi vida con esto? Una frase por cada paso es suficiente."
+   },
+   {
+    "titulo": "4. Acompaña la lectura con oración",
+    "texto": "Antes de leer: 'Señor, abre mis ojos para ver tu Palabra'. Después: 'Señor, gracias por lo que me has mostrado, ayúdame a vivirlo'. La Biblia se lee de rodillas."
+   },
+   {
+    "titulo": "5. No te detengas si no entiendes",
+    "texto": "Hay pasajes difíciles. Subráyalos y sigue. Muchos se aclaran con la lectura posterior. Lo importante es avanzar, no quedarte atascado."
+   }
+  ],
+  "consejos_rapidos": [
+   "Un capítulo de Proverbios al día = sabiduría para tu día",
+   "El Salmo 23 para el miedo, el 91 para la protección, el 51 para el arrepentimiento",
+   "Los Evangelios en este orden: Marcos, Juan, Lucas, Mateo (del más simple al más profundo)",
+   "Subraya o anota lo que te llame la atención",
+   "Comparte con alguien lo que estás leyendo: se aprende enseñando"
+  ]
+ }
 }
