@@ -176,7 +176,7 @@ export default function App() {
   const showPremiumAlert = (seccion) => {
     Alert.alert(
       '✨ Premium',
-      `${seccion} son parte de Premium.\n\n• 2,99€/mes (cancela cuando quieras)\n• 15€/año (2 meses gratis)\n• o 39,99€ pago único para siempre\n• o prueba gratis 3 días\n\nCon Premium: planes de lectura completos, estadísticas, favoritos ilimitados, widgets avanzados, temas visuales y próximas funciones.`,
+      `${seccion} son parte de Premium.\n\n• 0,99€/mes (cancela cuando quieras)\n• 10€/año (2 meses gratis)\n• o 25€ pago único para siempre\n• o prueba gratis 3 días\n\nCon Premium: planes de lectura completos, estadísticas, favoritos ilimitados, widgets avanzados, temas visuales y próximas funciones.`,
       [
         { text: 'Ahora no', style: 'cancel' },
         {
@@ -258,7 +258,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea 5 planes de lectura completos con Premium</Text>
-                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.planes?.map((p) => (
@@ -277,7 +277,7 @@ export default function App() {
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los resúmenes de los 66 libros')}>
                 <Text style={styles.premiumEmoji}>🔒</Text>
                 <Text style={styles.premiumText}>Desbloquea los resúmenes de los 66 libros de la Biblia</Text>
-                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
               </TouchableOpacity>
             )}
             {isPremium && versesData.libros?.map((libro) => (
@@ -377,7 +377,7 @@ export default function App() {
             {!isPremium && (
               <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
                 <Text style={styles.premiumBannerText}>✨ Premium: planes de lectura, estadísticas, favoritos ilimitados y más</Text>
-                <Text style={styles.premiumCta}>2,99€/mes · 15€/año · 39,99€ vitalicio →</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
               </TouchableOpacity>
             )}
           </ScrollView>
