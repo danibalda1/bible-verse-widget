@@ -639,16 +639,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   langBar: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   langBarContent: {
-    gap: 8,
-    paddingHorizontal: 16,
+    gap: 6,
+    paddingHorizontal: 12,
   },
   langChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 14,
     backgroundColor: '#E8F0FE',
   },
   langChipActive: {
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   },
   langText: {
     color: '#1E3A8A',
-    fontSize: 12,
+    fontSize: 10,
   },
   langTextActive: {
     color: '#FFFFFF',
