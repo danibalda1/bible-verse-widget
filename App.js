@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,22 @@ import {
   ScrollView,
   Share,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NativeModules } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import versesData from './verses.json';
+import {
+  checkStreak,
+  getFavorites,
+  toggleFavorite,
+  isFavorite,
+  loadPremium,
+  savePremium,
+  loadLang,
+  saveLang,
+} from './storage';
 
 // Configuración de notificaciones
 Notifications.setNotificationHandler({
@@ -44,8 +56,8 @@ const THEMES = [
 ];
 
 const TABS = [
-  { code: 'dia', name: 'De hoy', icon: '📅' },
-  { code: 'consejo', name: 'Consejo', icon: '💡' },
+  { code: 'dia', name: 'Hoy', icon: '📅' },
+  { code: 'favoritos', name: 'Favoritos', icon: '❤️' },
   { code: 'guia', name: 'Guía', icon: '📚' },
   { code: 'oraciones', name: 'Oraciones', icon: '🙏' },
   { code: 'mandamientos', name: 'Los 10', icon: '📜' },
@@ -54,13 +66,13 @@ const TABS = [
 
 // Configuración FREE vs PREMIUM (estrategia: gratis generosa, premium = funciones)
 const FREE_LIMITS = {
-  temas: 9,            // TODOS los temas gratis (fideliza)
-  consejos: 316,       // todos los consejos gratis
-  oraciones: 8,        // todas las oraciones gratis
-  librosGuia: 5,       // solo 5 resúmenes de libros
-  planes: 1,           // solo 1 plan
-  favoritos: 20,       // 20 favoritos en gratis, ilimitados en premium
-  widgets: 1,          // 1 widget en gratis, avanzados en premium
+  temas: 9,
+  consejos: 316,
+  oraciones: 8,
+  librosGuia: 5,
+  planes: 1,
+  favoritos: 20,
+  widgets: 1,
   conAnuncios: true,
 };
 
@@ -71,50 +83,40 @@ export default function App() {
   const [verse, setVerse] = useState(null);
   const [dayOfYear, setDayOfYear] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [favorites, setFavorites] = useState([]);
+  const [favIds, setFavIds] = useState(new Set());
+  const [doneToday, setDoneToday] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Versículo del día basado en el día del año (0-based: 0 = 1 de enero)
+  const todayDate = new Date();
+  const dayIndex = Math.floor(
+    (todayDate - new Date(todayDate.getFullYear(), 0, 1)) / 86400000
+  );
+
+  // Cargar estado persistente al montar
   useEffect(() => {
-    const now = new Date();
-    const dayIndex = Math.floor(
-      (now - new Date(now.getFullYear(), 0, 1)) / 86400000
-    );
-    setDayOfYear(dayIndex);
-    pickVerse(dayIndex);
-    scheduleDailyNotification();
+    (async () => {
+      const [s, favs, prem, savedLang] = await Promise.all([
+        checkStreak(),
+        getFavorites(),
+        loadPremium(),
+        loadLang(),
+      ]);
+      setStreak(s.streak);
+      setFavorites(favs);
+      setFavIds(new Set(favs.map((f) => `${f.type}:${f.id}`)));
+      setIsPremium(prem);
+      if (savedLang) setLang(savedLang);
+
+      const done = await AsyncStorage.getItem('@fe_diaria/done_today');
+      setDoneToday(done === todayDate.toISOString().slice(0, 10));
+
+      setDayOfYear(dayIndex);
+      pickVerse(dayIndex);
+      scheduleDailyNotification();
+    })();
   }, []);
-
-  // Programar notificación diaria (8:00) con versículo y consejo
-  const scheduleDailyNotification = async () => {
-    try {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') return;
-
-      await Notifications.cancelAllScheduledNotificationsAsync();
-
-      const now = new Date();
-      const dayIndex = Math.floor(
-        (now - new Date(now.getFullYear(), 0, 1)) / 86400000
-      );
-      const verses = versesData.verses;
-      const todayVerse = verses[dayIndex % verses.length];
-      const consejos = versesData.consejos || [];
-      const consejo = consejos.length > 0 ? consejos[dayIndex % consejos.length] : '';
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: '📖 Versículo del Día',
-          body: `"${todayVerse[lang] || todayVerse.es}" — ${todayVerse.ref}${consejo ? `\n💡 ${consejo}` : ''}`,
-        },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.DAILY,
-          hour: 8,
-          minute: 0,
-        },
-      });
-    } catch (e) {
-      console.log('Notificación no programada:', e.message);
-    }
-  };
 
   const pickVerse = (day, themeCode = theme) => {
     const verses = versesData.verses;
@@ -126,6 +128,33 @@ export default function App() {
       }
     }
     setVerse(verses[day % verses.length]);
+  };
+
+  const scheduleDailyNotification = async () => {
+    try {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') return;
+
+      await Notifications.cancelAllScheduledNotificationsAsync();
+
+      const v = versesData.verses[dayIndex % versesData.verses.length];
+      const consejos = versesData.consejos || [];
+      const consejo = consejos.length > 0 ? consejos[dayIndex % consejos.length] : '';
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: '📖 Versículo del Día',
+          body: `"${v[lang] || v.es}" — ${v.ref}${consejo ? `\n💡 ${consejo}` : ''}`,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour: 8,
+          minute: 0,
+        },
+      });
+    } catch (e) {
+      console.log('Notificación no programada:', e.message);
+    }
   };
 
   const nextVerse = () => {
@@ -141,36 +170,53 @@ export default function App() {
 
   const changeTheme = (code) => {
     setTheme(code);
-    const now = new Date();
-    const dayIndex = Math.floor(
-      (now - new Date(now.getFullYear(), 0, 1)) / 86400000
-    );
     pickVerse(dayIndex, code);
   };
 
   const changeLang = (code) => {
     setLang(code);
+    saveLang(code);
     try {
       NativeModules.WidgetLang?.setLang(code);
-    } catch (e) {
-      console.log('WidgetLang no disponible:', e.message);
-    }
+    } catch (e) {}
   };
 
-  const shareVerse = () => {
-    if (!verse) return;
-    const text = `"${verse[lang]}"\n\n— ${verse.ref}\n\n📖 Versículo del día`;
+  const shareText = (text) => {
     Share.share({ message: text });
   };
 
-  const shareConsejo = () => {
-    const consejos = versesData.consejos || [];
-    const consejo = consejos.length > 0 ? consejos[dayOfYear % consejos.length] : '';
-    Share.share({ message: `💡 Consejo del día\n\n${consejo}\n\n— App Versículo del Día` });
+  // Favoritos
+  const onToggleFavorite = async (item) => {
+    // Límite gratis
+    if (!isPremium && favorites.length >= FREE_LIMITS.favoritos) {
+      showPremiumAlert('Favoritos ilimitados');
+      return;
+    }
+    const { favs, isFav } = await toggleFavorite(item);
+    setFavorites(favs);
+    const ids = new Set(favs.map((f) => `${f.type}:${f.id}`));
+    setFavIds(ids);
+    if (!isFav) Alert.alert('❤️ Eliminado de favoritos');
   };
 
-  const currentLang = LANGUAGES.find((l) => l.code === lang);
-  const currentTheme = THEMES.find((t) => t.code === theme);
+  const isFav = (id, type) => favIds.has(`${type}:${id}`);
+
+  // Momento diario completado
+  const markDoneToday = async () => {
+    setDoneToday(true);
+    try {
+      await AsyncStorage.setItem('@fe_diaria/done_today', todayDate.toISOString().slice(0, 10));
+      // Actualizar racha
+      const s = await checkStreak();
+      setStreak(s.streak);
+    } catch (e) {}
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    pickVerse(dayIndex, theme);
+    setRefreshing(false);
+  }, [dayIndex, theme]);
 
   // Alerta de contenido premium
   const showPremiumAlert = (seccion) => {
@@ -181,15 +227,17 @@ export default function App() {
         { text: 'Ahora no', style: 'cancel' },
         {
           text: 'Probar 3 días gratis',
-          onPress: () => {
+          onPress: async () => {
             setIsPremium(true);
+            await savePremium(true);
             Alert.alert('✨ Prueba activada', 'Disfruta Premium 3 días. Esta demo se conectará a pagos reales con la cuenta de Play Store.');
           },
         },
         {
           text: 'Desbloquear (demo)',
-          onPress: () => {
+          onPress: async () => {
             setIsPremium(true);
+            await savePremium(true);
             Alert.alert('✨ Premium activado', 'Modo demo: así se ve la versión de pago.');
           },
         },
@@ -197,42 +245,181 @@ export default function App() {
     );
   };
 
-  // Consejo del día
+  const currentLang = LANGUAGES.find((l) => l.code === lang);
+  const currentTheme = THEMES.find((t) => t.code === theme);
+
+  // Contenido del día
   const consejoDelDia = versesData.consejos && versesData.consejos.length > 0
-    ? versesData.consejos[dayOfYear % versesData.consejos.length]
+    ? versesData.consejos[dayIndex % versesData.consejos.length]
     : '';
-
-  // Oración del día (rota semanalmente)
   const oracionDelDia = versesData.oraciones && versesData.oraciones.length > 0
-    ? versesData.oraciones[dayOfYear % versesData.oraciones.length]
+    ? versesData.oraciones[dayIndex % versesData.oraciones.length]
+    : null;
+  const planDelDia = isPremium && versesData.planes && versesData.planes.length > 0
+    ? versesData.planes[dayIndex % versesData.planes.length]
+    : null;
+  const mandamientoDelDia = versesData.mandamientos && versesData.mandamientos.length > 0
+    ? versesData.mandamientos[dayIndex % versesData.mandamientos.length]
     : null;
 
-  // Mandamiento del día (rota por día de la semana)
-  const mandamientoDelDia = versesData.mandamientos && versesData.mandamientos.length > 0
-    ? versesData.mandamientos[dayOfYear % versesData.mandamientos.length]
-    : null;
+  const fechaBonita = todayDate.toLocaleDateString(lang === 'es' ? 'es-ES' : lang, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
 
   // Render de cada pestaña
   const renderTab = () => {
     switch (tab) {
-      case 'consejo':
+      case 'dia':
+      default:
         return (
-          <ScrollView contentContainerStyle={styles.tabContent}>
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>💡 Consejo del día</Text>
-              <Text style={styles.cardBody}>{consejoDelDia}</Text>
-              <TouchableOpacity style={styles.btnPrimary} onPress={shareConsejo}>
-                <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
-              </TouchableOpacity>
+          <ScrollView
+            contentContainerStyle={styles.tabContent}
+            showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
+            {/* Racha */}
+            <View style={styles.streakRow}>
+              <Text style={styles.streakText}>
+                🔥 {streak} {streak === 1 ? 'día' : 'días'} seguidos
+              </Text>
+              {doneToday && <Text style={styles.doneBadge}>✓ Hecho hoy</Text>}
             </View>
 
-            <Text style={styles.sectionHeader}>✝️ Los Diez Mandamientos</Text>
-            {versesData.mandamientos && versesData.mandamientos.map((m) => (
-              <View key={m.id} style={styles.listCard}>
-                <Text style={styles.listNum}>{m.id}</Text>
-                <Text style={styles.listText}>{m[lang] || m.es}</Text>
+            <Text style={styles.fechaLabel}>{fechaBonita}</Text>
+
+            {/* Versículo del día */}
+            {verse && (
+              <View style={styles.card}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>
+                    {currentTheme?.icon} Versículo de {currentTheme?.name}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `v_${verse.id}`, type: 'verso', texto: verse[lang] || verse.es, ref: verse.ref })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`v_${verse.id}`, 'verso') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.verseText}>{verse[lang] || verse.es}</Text>
+                <Text style={styles.verseRef}>— {verse.ref}</Text>
+
+                <View style={styles.actions}>
+                  <TouchableOpacity style={styles.btnSecondary} onPress={nextVerse}>
+                    <Text style={styles.btnSecondaryText}>🔄 Otro</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.btnPrimary} onPress={() => shareText(`"${verse[lang] || verse.es}"\n\n— ${verse.ref}\n\n📖 Fe Diaria`)}>
+                    <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {/* Consejo del día */}
+            {consejoDelDia && (
+              <View style={styles.card}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>💡 Consejo del día</Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `c_${dayIndex}`, type: 'consejo', texto: consejoDelDia })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`c_${dayIndex}`, 'consejo') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.cardBody}>{consejoDelDia}</Text>
+              </View>
+            )}
+
+            {/* Oración del día */}
+            {oracionDelDia && (
+              <View style={styles.card}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>🙏 {oracionDelDia.titulo}</Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `o_${oracionDelDia.id}`, type: 'oracion', texto: oracionDelDia[lang] || oracionDelDia.es, ref: oracionDelDia.titulo })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`o_${oracionDelDia.id}`, 'oracion') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.cardBodySmall}>{oracionDelDia[lang] || oracionDelDia.es}</Text>
+              </View>
+            )}
+
+            {/* Fragmento del plan (premium) */}
+            {planDelDia ? (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>🗓️ {planDelDia.titulo}</Text>
+                <Text style={styles.cardBodySmall}>{planDelDia.pasos[0]}</Text>
+                <Text style={styles.planHint}>Plan de lectura del día · ver Guía para el plan completo</Text>
+              </View>
+            ) : (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Desbloquea 5 planes de lectura completos con Premium</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Botón completar */}
+            <TouchableOpacity
+              style={[styles.doneBtn, doneToday && styles.doneBtnActive]}
+              onPress={markDoneToday}
+              disabled={doneToday}
+            >
+              <Text style={styles.doneBtnText}>
+                {doneToday ? '✓ Momento completado hoy' : '✓ Completé mi momento de hoy'}
+              </Text>
+            </TouchableOpacity>
+
+            {!isPremium && (
+              <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
+                <Text style={styles.premiumBannerText}>✨ Premium: planes de lectura, estadísticas, favoritos ilimitados y más</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        );
+
+      case 'favoritos':
+        return (
+          <ScrollView contentContainerStyle={styles.tabContent}>
+            <Text style={styles.sectionHeader}>❤️ Mis favoritos</Text>
+            {favorites.length === 0 && (
+              <View style={styles.emptyCard}>
+                <Text style={styles.emptyEmoji}>🤍</Text>
+                <Text style={styles.emptyText}>
+                  Guarda versículos, consejos y oraciones tocando el corazón. {!isPremium && `Tienes ${FREE_LIMITS.favoritos} favoritos en la versión gratis.`}
+                </Text>
+              </View>
+            )}
+            {favorites.map((f, i) => (
+              <View key={i} style={styles.card}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>
+                    {f.type === 'verso' ? '📖 Versículo' : f.type === 'consejo' ? '💡 Consejo' : '🙏 Oración'}
+                  </Text>
+                  <TouchableOpacity onPress={() => onToggleFavorite(f)} style={styles.favBtn}>
+                    <Text style={styles.favIcon}>❤️</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.cardBody}>{f.texto}</Text>
+                {f.ref && <Text style={styles.verseRef}>{f.ref}</Text>}
+                <TouchableOpacity style={styles.btnPrimary} onPress={() => shareText(`"${f.texto}"${f.ref ? `\n\n— ${f.ref}` : ''}\n\n📖 Fe Diaria`)}>
+                  <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
+                </TouchableOpacity>
               </View>
             ))}
+            {favorites.length >= FREE_LIMITS.favoritos && !isPremium && (
+              <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Favoritos ilimitados')}>
+                <Text style={styles.premiumEmoji}>🔒</Text>
+                <Text style={styles.premiumText}>Has llegado al límite de {FREE_LIMITS.favoritos} favoritos. Con Premium, ilimitados.</Text>
+                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         );
 
@@ -241,7 +428,6 @@ export default function App() {
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>📚 Guía de lectura de la Biblia</Text>
 
-            {/* Guía de inicio */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>{versesData.guia_inicio?.titulo}</Text>
               {versesData.guia_inicio?.pasos.map((p, i) => (
@@ -252,7 +438,6 @@ export default function App() {
               ))}
             </View>
 
-            {/* Planes de lectura (premium) */}
             <Text style={styles.sectionHeader}>🗓️ Planes de lectura</Text>
             {!isPremium && (
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los planes de lectura')}>
@@ -271,7 +456,6 @@ export default function App() {
               </View>
             ))}
 
-            {/* Resúmenes de libros (premium) */}
             <Text style={styles.sectionHeader}>📖 Resúmenes de los 66 libros</Text>
             {!isPremium && (
               <TouchableOpacity style={styles.premiumCard} onPress={() => showPremiumAlert('Los resúmenes de los 66 libros')}>
@@ -300,14 +484,30 @@ export default function App() {
             <Text style={styles.sectionHeader}>🙏 Oración del día</Text>
             {oracionDelDia && (
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>{oracionDelDia.titulo}</Text>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>{oracionDelDia.titulo}</Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `o_${oracionDelDia.id}`, type: 'oracion', texto: oracionDelDia[lang] || oracionDelDia.es, ref: oracionDelDia.titulo })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`o_${oracionDelDia.id}`, 'oracion') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={styles.cardBody}>{oracionDelDia[lang] || oracionDelDia.es}</Text>
               </View>
             )}
             <Text style={styles.sectionHeader}>📖 Todas las oraciones</Text>
             {(versesData.oraciones || []).map((o) => (
               <View key={o.id} style={styles.card}>
-                <Text style={styles.cardTitle}>{o.titulo}</Text>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>{o.titulo}</Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `o_${o.id}`, type: 'oracion', texto: o[lang] || o.es, ref: o.titulo })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`o_${o.id}`, 'oracion') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={styles.cardBody}>{o[lang] || o.es}</Text>
               </View>
             ))}
@@ -339,55 +539,12 @@ export default function App() {
             ))}
           </ScrollView>
         );
-
-      case 'dia':
-      default:
-        return (
-          <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
-            {verse && (
-              <View style={styles.card}>
-                <Text style={styles.dateLabel}>
-                  📅 {new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : lang, { day: 'numeric', month: 'long' })}
-                </Text>
-                <Text style={styles.cardTitle}>
-                  {currentTheme?.icon} Versículo de {currentTheme?.name}
-                </Text>
-                <Text style={styles.verseText}>{verse[lang] || verse.es}</Text>
-                <Text style={styles.verseRef}>— {verse.ref}</Text>
-
-                <View style={styles.actions}>
-                  <TouchableOpacity style={styles.btnSecondary} onPress={nextVerse}>
-                    <Text style={styles.btnSecondaryText}>🔄 Otro</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnPrimary} onPress={shareVerse}>
-                    <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-
-            {consejoDelDia && (
-              <TouchableOpacity style={styles.consejoCard} onPress={shareConsejo}>
-                <Text style={styles.consejoTitle}>💡 Consejo del día</Text>
-                <Text style={styles.consejoText}>{consejoDelDia}</Text>
-                <Text style={styles.consejoTap}>Toca para compartir →</Text>
-              </TouchableOpacity>
-            )}
-
-            {!isPremium && (
-              <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
-                <Text style={styles.premiumBannerText}>✨ Premium: planes de lectura, estadísticas, favoritos ilimitados y más</Text>
-                <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
-              </TouchableOpacity>
-            )}
-          </ScrollView>
-        );
     }
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
@@ -539,6 +696,34 @@ const styles = StyleSheet.create({
   tabContent: {
     paddingBottom: 100,
   },
+  streakRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  streakText: {
+    color: '#1D4ED8',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  doneBadge: {
+    color: '#FFFFFF',
+    backgroundColor: '#16A34A',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    fontSize: 12,
+    fontWeight: '700',
+    overflow: 'hidden',
+  },
+  fechaLabel: {
+    color: '#5B7BB4',
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 10,
+    textTransform: 'capitalize',
+  },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
@@ -546,18 +731,29 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 3,
     position: 'relative',
     zIndex: 20,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  favBtn: {
+    padding: 4,
+  },
+  favIcon: {
+    fontSize: 18,
   },
   cardTitle: {
     color: '#1D4ED8',
     fontSize: 14,
     fontWeight: '700',
-    marginBottom: 12,
-    textAlign: 'center',
+    flex: 1,
   },
   dateLabel: {
     color: '#5B7BB4',
@@ -582,6 +778,12 @@ const styles = StyleSheet.create({
     color: '#3B5A8C',
     fontSize: 15,
     lineHeight: 24,
+    textAlign: 'center',
+  },
+  cardBodySmall: {
+    color: '#3B5A8C',
+    fontSize: 13,
+    lineHeight: 20,
     textAlign: 'center',
   },
   verseText: {
@@ -638,32 +840,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  consejoCard: {
-    backgroundColor: '#E8F0FE',
-    borderRadius: 16,
-    padding: 20,
-    marginTop: 4,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#1D4ED8',
-    zIndex: 1,
-  },
-  consejoTitle: {
-    color: '#1D4ED8',
-    fontSize: 13,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  consejoText: {
-    color: '#1E3A8A',
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  consejoTap: {
+  planHint: {
     color: '#5B7BB4',
     fontSize: 11,
     marginTop: 8,
-    textAlign: 'right',
+    textAlign: 'center',
+  },
+  doneBtn: {
+    backgroundColor: '#1D4ED8',
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  doneBtnActive: {
+    backgroundColor: '#16A34A',
+  },
+  doneBtnText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
   sectionHeader: {
     color: '#1D4ED8',
@@ -757,6 +954,23 @@ const styles = StyleSheet.create({
     color: '#3B5A8C',
     fontSize: 14,
     flex: 1,
+  },
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 30,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  emptyEmoji: {
+    fontSize: 40,
+    marginBottom: 12,
+  },
+  emptyText: {
+    color: '#5B7BB4',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
   },
   tabsBar: {
     flexDirection: 'row',

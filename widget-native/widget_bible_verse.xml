@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/widget_verse_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:textColor="#1E3A8A"
+        android:lineSpacingMultiplier="1.3"
+        android:maxLines="6"
+        android:ellipsize="end"
+        android:text="Porque de tal manera amó Dios al mundo..." />
+
+    <TextView
+        android:id="@+id/widget_verse_ref"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#1D4ED8"
+        android:text="— Juan 3:16" />
+
+</LinearLayout>
