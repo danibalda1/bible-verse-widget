@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   Share,
   Alert,
   RefreshControl,
+  Animated,
+  Easing,
+  Dimensions,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NativeModules } from 'react-native';
@@ -77,6 +80,32 @@ const FREE_LIMITS = {
   conAnuncios: true,
 };
 
+// Sistema de niveles tipo juego (basado en racha)
+const LEVELS = [
+  { min: 0, name: 'Semilla', icon: '🌱', color: '#059669' },
+  { min: 3, name: 'Brote', icon: '🌿', color: '#10B981' },
+  { min: 7, name: 'Planta', icon: '🌷', color: '#D97706' },
+  { min: 14, name: 'Árbol', icon: '🌳', color: '#7C3AED' },
+  { min: 30, name: 'Jardín', icon: '🌸', color: '#DB2777' },
+  { min: 60, name: 'Bosque', icon: '🌲', color: '#2563EB' },
+  { min: 100, name: 'Roble', icon: '🌳', color: '#1D4ED8' },
+  { min: 200, name: 'Redwood', icon: '🎄', color: '#0F2A6E' },
+];
+
+const getLevel = (streak) => {
+  let level = LEVELS[0];
+  let next = LEVELS[1];
+  for (let i = 0; i < LEVELS.length; i++) {
+    if (streak >= LEVELS[i].min) {
+      level = LEVELS[i];
+      next = LEVELS[i + 1] || null;
+    }
+  }
+  return { level, next };
+};
+
+const { width: SCREEN_W } = Dimensions.get('window');
+
 export default function App() {
   const [lang, setLang] = useState('es');
   const [theme, setTheme] = useState('fe');
@@ -89,6 +118,63 @@ export default function App() {
   const [favIds, setFavIds] = useState(new Set());
   const [doneToday, setDoneToday] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  // Animaciones
+  const verseAnim = useRef(new Animated.Value(1)).current;
+  const confettiPieces = useRef(
+    Array.from({ length: 12 }, (_, i) => ({
+      x: useRef(new Animated.Value(0)).current,
+      y: useRef(new Animated.Value(-30)).current,
+      rotate: useRef(new Animated.Value(0)).current,
+      delay: i * 60,
+      color: ['#3B82F6', '#F59E0B', '#10B981', '#EC4899', '#8B5CF6', '#EF4444'][i % 6],
+      emoji: ['✨', '⭐', '🌿', '🕊️', '💙', '🌟'][i % 6],
+    }))
+  ).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // Animación de aparición del versículo
+  const animateVerseChange = () => {
+    Animated.sequence([
+      Animated.timing(verseAnim, { toValue: 0.2, duration: 120, useNativeDriver: true }),
+      Animated.timing(verseAnim, { toValue: 1, duration: 350, useNativeDriver: true }),
+    ]).start();
+  };
+
+  // Explosión de confeti (al completar el momento)
+  const burstConfetti = () => {
+    confettiPieces.forEach((piece) => {
+      piece.x.setValue(0);
+      piece.y.setValue(0);
+      piece.rotate.setValue(0);
+      Animated.parallel([
+        Animated.timing(piece.y, {
+          toValue: -(180 + Math.random() * 120),
+          duration: 900,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(piece.x, {
+          toValue: (Math.random() - 0.5) * SCREEN_W * 0.8,
+          duration: 900,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(piece.rotate, {
+          toValue: Math.random() * 360,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+  };
+
+  // Pulsación suave de botones
+  const pressIn = () => {
+    Animated.spring(scaleAnim, { toValue: 0.96, useNativeDriver: true, speed: 40 }).start();
+  };
+  const pressOut = () => {
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 40 }).start();
+  };
 
   const todayDate = new Date();
   const dayIndex = Math.floor(
@@ -167,6 +253,7 @@ export default function App() {
     }
     const idx = (filtered.indexOf(verse) + 1) % filtered.length;
     setVerse(filtered[idx]);
+    animateVerseChange();
   };
 
   const changeTheme = (code) => {
@@ -205,6 +292,7 @@ export default function App() {
   // Momento diario completado
   const markDoneToday = async () => {
     setDoneToday(true);
+    burstConfetti();
     try {
       await AsyncStorage.setItem('@fe_diaria/done_today', todayDate.toISOString().slice(0, 10));
       // Actualizar racha
@@ -274,49 +362,83 @@ export default function App() {
     switch (tab) {
       case 'dia':
       default:
-        return (
-          <ScrollView
-            contentContainerStyle={styles.tabContent}
-            showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          >
-            {/* Racha */}
-            <View style={styles.streakRow}>
-              <Text style={styles.streakText}>
-                🔥 {streak} {streak === 1 ? 'día' : 'días'} seguidos
-              </Text>
-              {doneToday && <Text style={styles.doneBadge}>✓ Hecho hoy</Text>}
-            </View>
+        const { level, next } = getLevel(streak);
+          const progress = next ? (streak - level.min) / (next.min - level.min) : 1;
+          return (
+            <ScrollView
+              contentContainerStyle={styles.tabContent}
+              showsVerticalScrollIndicator={false}
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            >
+              {/* Confeti overlay */}
+              {confettiPieces.map((piece, i) => (
+                <Animated.View
+                  key={i}
+                  pointerEvents="none"
+                  style={{
+                    position: 'absolute',
+                    left: SCREEN_W / 2 - 15,
+                    top: 200,
+                    opacity: 1,
+                    transform: [
+                      { translateY: piece.y },
+                      { translateX: piece.x },
+                      { rotate: piece.rotate.interpolate({ inputRange: [0, 360], outputRange: ['0deg', '360deg'] }) },
+                    ],
+                    zIndex: 100,
+                  }}
+                >
+                  <Text style={{ fontSize: 22 }}>{piece.emoji}</Text>
+                </Animated.View>
+              ))}
 
-            <Text style={styles.fechaLabel}>{fechaBonita}</Text>
-
-            {/* Versículo del día */}
-            {verse && (
-              <View style={styles.card}>
-                <View style={styles.cardHeaderRow}>
-                  <Text style={styles.cardTitle}>
-                    {currentTheme?.icon} Versículo de {currentTheme?.name}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => onToggleFavorite({ id: `v_${verse.id}`, type: 'verso', texto: verse[lang] || verse.es, ref: verse.ref })}
-                    style={styles.favBtn}
-                  >
-                    <Text style={styles.favIcon}>{isFav(`v_${verse.id}`, 'verso') ? '❤️' : '🤍'}</Text>
-                  </TouchableOpacity>
+              {/* Tarjeta de nivel (game-like) */}
+              <View style={[styles.levelCard, { backgroundColor: level.color }]}>
+                <View style={styles.levelRow}>
+                  <Text style={styles.levelIcon}>{level.icon}</Text>
+                  <View style={styles.levelInfo}>
+                    <Text style={styles.levelName}>Nivel {LEVELS.indexOf(level) + 1} · {level.name}</Text>
+                    <Text style={styles.levelStreak}>🔥 {streak} {streak === 1 ? 'día' : 'días'} seguidos</Text>
+                  </View>
+                  {doneToday && <Text style={styles.doneBadge}>✓ Hoy</Text>}
                 </View>
-                <Text style={styles.verseText}>{verse[lang] || verse.es}</Text>
-                <Text style={styles.verseRef}>— {verse.ref}</Text>
-
-                <View style={styles.actions}>
-                  <TouchableOpacity style={styles.btnSecondary} onPress={nextVerse}>
-                    <Text style={styles.btnSecondaryText}>🔄 Otro</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnPrimary} onPress={() => shareText(`"${verse[lang] || verse.es}"\n\n— ${verse.ref}\n\n📖 Fe Diaria`)}>
-                    <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
-                  </TouchableOpacity>
+                <View style={styles.progressTrack}>
+                  <View style={[styles.progressFill, { width: `${Math.min(100, progress * 100)}%` }]} />
                 </View>
+                <Text style={styles.progressLabel}>
+                  {next ? `${next.min - streak} días para ${next.name} ${next.icon}` : '¡Nivel máximo! 🏆'}
+                </Text>
               </View>
-            )}
+
+              <Text style={styles.fechaLabel}>{fechaBonita}</Text>
+
+              {/* Versículo del día */}
+              {verse && (
+                <Animated.View style={[styles.card, { opacity: verseAnim, transform: [{ scale: verseAnim }] }]}>
+                  <View style={styles.cardHeaderRow}>
+                    <Text style={styles.cardTitle}>
+                      {currentTheme?.icon} Versículo de {currentTheme?.name}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => onToggleFavorite({ id: `v_${verse.id}`, type: 'verso', texto: verse[lang] || verse.es, ref: verse.ref })}
+                      style={styles.favBtn}
+                    >
+                      <Text style={styles.favIcon}>{isFav(`v_${verse.id}`, 'verso') ? '❤️' : '🤍'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.verseText}>{verse[lang] || verse.es}</Text>
+                  <Text style={styles.verseRef}>— {verse.ref}</Text>
+
+                  <View style={styles.actions}>
+                    <TouchableOpacity style={styles.btnSecondary} onPress={nextVerse} onPressIn={pressIn} onPressOut={pressOut} activeOpacity={0.8}>
+                      <Text style={styles.btnSecondaryText}>🔄 Otro</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnPrimary} onPress={() => shareText(`"${verse[lang] || verse.es}"\n\n— ${verse.ref}\n\n📖 Fe Diaria`)} onPressIn={pressIn} onPressOut={pressOut} activeOpacity={0.8}>
+                      <Text style={styles.btnPrimaryText}>📤 Compartir</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Animated.View>
+              )}
 
             {/* Consejo del día */}
             {consejoDelDia && (
@@ -544,7 +666,12 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#EEF4FF', '#F7F8FA', '#F7F8FA']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 0.6 }}
+      style={styles.container}
+    >
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
@@ -621,7 +748,7 @@ export default function App() {
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -749,6 +876,57 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontSize: 14,
     fontWeight: '700',
+  },
+  levelCard: {
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  levelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  levelIcon: {
+    fontSize: 34,
+    marginRight: 12,
+  },
+  levelInfo: {
+    flex: 1,
+  },
+  levelName: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  levelStreak: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 13,
+    marginTop: 2,
+    fontWeight: '600',
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    marginTop: 12,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+  },
+  progressLabel: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 11,
+    marginTop: 6,
+    fontWeight: '600',
   },
   doneBadge: {
     color: '#FFFFFF',
