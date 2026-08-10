@@ -27,6 +27,11 @@ import {
   savePremium,
   loadLang,
   saveLang,
+  ACHIEVEMENTS,
+  getUnlockedAchievements,
+  saveUnlockedAchievements,
+  getDoneDays,
+  addDoneDay,
 } from './storage';
 
 // Configuración de notificaciones
@@ -118,6 +123,8 @@ export default function App() {
   const [favIds, setFavIds] = useState(new Set());
   const [doneToday, setDoneToday] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [achievements, setAchievements] = useState([]);
+  const [doneDays, setDoneDays] = useState([]);
   // Animaciones
   const verseAnim = useRef(new Animated.Value(1)).current;
   const confettiPieces = useRef(
@@ -198,6 +205,23 @@ export default function App() {
 
       const done = await AsyncStorage.getItem('@fe_diaria/done_today');
       setDoneToday(done === todayDate.toISOString().slice(0, 10));
+
+      const [achs, ddays] = await Promise.all([getUnlockedAchievements(), getDoneDays()]);
+      setAchievements(achs);
+      setDoneDays(ddays);
+      // Comprobar logros según la racha actual
+      const newAchs = [...achs];
+      let changed = false;
+      ACHIEVEMENTS.forEach((a) => {
+        if (s.streak >= a.days && !newAchs.includes(a.id)) {
+          newAchs.push(a.id);
+          changed = true;
+        }
+      });
+      if (changed) {
+        setAchievements(newAchs);
+        await saveUnlockedAchievements(newAchs);
+      }
 
       setDayOfYear(dayIndex);
       pickVerse(dayIndex);
@@ -294,10 +318,31 @@ export default function App() {
     setDoneToday(true);
     burstConfetti();
     try {
-      await AsyncStorage.setItem('@fe_diaria/done_today', todayDate.toISOString().slice(0, 10));
+      const todayStr = todayDate.toISOString().slice(0, 10);
+      await AsyncStorage.setItem('@fe_diaria/done_today', todayStr);
+      const days = await addDoneDay(todayStr);
+      setDoneDays(days);
       // Actualizar racha
       const s = await checkStreak();
       setStreak(s.streak);
+      // Comprobar logros
+      const newAchs = [...achievements];
+      let changed = false;
+      ACHIEVEMENTS.forEach((a) => {
+        if (s.streak >= a.days && !newAchs.includes(a.id)) {
+          newAchs.push(a.id);
+          changed = true;
+        }
+      });
+      if (changed) {
+        setAchievements(newAchs);
+        await saveUnlockedAchievements(newAchs);
+        // Nueva insignia -> alerta especial
+        const newlyUnlocked = ACHIEVEMENTS.filter((a) => newAchs.includes(a.id) && !achievements.includes(a.id));
+        if (newlyUnlocked.length > 0) {
+          Alert.alert('🏅 ¡Nuevo logro!', `${newlyUnlocked.map((a) => `${a.icon} ${a.name} — ${a.desc}`).join('\n')}`);
+        }
+      }
     } catch (e) {}
   };
 
@@ -492,11 +537,55 @@ export default function App() {
               style={[styles.doneBtn, doneToday && styles.doneBtnActive]}
               onPress={markDoneToday}
               disabled={doneToday}
+              onPressIn={pressIn}
+              onPressOut={pressOut}
+              activeOpacity={0.85}
             >
               <Text style={styles.doneBtnText}>
                 {doneToday ? '✓ Momento completado hoy' : '✓ Completé mi momento de hoy'}
               </Text>
             </TouchableOpacity>
+
+            {/* Calendario de racha (últimos 7 días) */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>📅 Tu semana</Text>
+              <View style={styles.weekRow}>
+                {Array.from({ length: 7 }, (_, i) => {
+                  const d = new Date(todayDate);
+                  d.setDate(todayDate.getDate() - (6 - i));
+                  const dStr = d.toISOString().slice(0, 10);
+                  const isDone = doneDays.includes(dStr);
+                  const isToday = i === 6;
+                  return (
+                    <View key={i} style={styles.weekDay}>
+                      <View style={[styles.weekDot, isDone && styles.weekDotDone, isToday && styles.weekDotToday]}>
+                        {isDone && <Text style={styles.weekDotCheck}>✓</Text>}
+                      </View>
+                      <Text style={styles.weekLabel}>
+                        {d.toLocaleDateString('es-ES', { weekday: 'short' }).slice(0, 2)}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Logros / Insignias */}
+            <Text style={styles.sectionHeader}>🏅 Logros</Text>
+            <View style={styles.achievementsGrid}>
+              {ACHIEVEMENTS.map((a) => {
+                const unlocked = achievements.includes(a.id);
+                return (
+                  <View key={a.id} style={[styles.achievementCard, !unlocked && styles.achievementLocked]}>
+                    <Text style={styles.achievementIcon}>{unlocked ? a.icon : '🔒'}</Text>
+                    <Text style={[styles.achievementName, !unlocked && styles.achievementNameLocked]}>{a.name}</Text>
+                  </View>
+                );
+              })}
+            </View>
+            <Text style={styles.achievementHint}>
+              {achievements.length}/{ACHIEVEMENTS.length} logros · completa tu momento cada día para desbloquearlos
+            </Text>
 
             {!isPremium && (
               <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
@@ -927,6 +1016,85 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 6,
     fontWeight: '600',
+  },
+  weekRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  weekDay: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  weekDot: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  weekDotDone: {
+    backgroundColor: '#10B981',
+  },
+  weekDotToday: {
+    borderColor: '#2563EB',
+    borderWidth: 2,
+  },
+  weekDotCheck: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  weekLabel: {
+    color: '#6B7280',
+    fontSize: 10,
+    marginTop: 4,
+    textTransform: 'capitalize',
+  },
+  achievementsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  achievementCard: {
+    width: '31%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginBottom: 8,
+    shadowColor: '#1E3A8A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  achievementLocked: {
+    opacity: 0.45,
+    backgroundColor: '#F3F4F6',
+  },
+  achievementIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  achievementName: {
+    color: '#111827',
+    fontSize: 10,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  achievementNameLocked: {
+    color: '#6B7280',
+  },
+  achievementHint: {
+    color: '#6B7280',
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 12,
   },
   doneBadge: {
     color: '#FFFFFF',
