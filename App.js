@@ -263,14 +263,20 @@ export default function App() {
 
       const v = versesData.verses[dayIndex % versesData.verses.length];
       const texto = v[lang] || v.es;
-      // Cebo: solo primeras palabras del versículo para invitar a abrir la app
-      const teaser = texto.length > 40 ? texto.slice(0, 40).trim() + '...' : texto;
       const streakText = streak > 0 ? ` · tu racha de ${streak} ${streak === 1 ? 'día' : 'días'} sigue viva 🔥` : '';
+
+      // Si el usuario NO tiene widget (solo notificación), mostrar el versículo COMPLETO
+      // en la pantalla de bloqueo — es su única vía de verlo sin abrir la app.
+      // Si tiene widget, usar cebo para que abra la app (el widget muestra el contenido).
+      const showFullVerse = deliveryPref === 'notificacion';
+      const body = showFullVerse
+        ? `"${texto}" — ${v.ref}${streakText}\n\nToca para completar tu momento de hoy ✨`
+        : `"${texto.length > 40 ? texto.slice(0, 40).trim() + '...' : texto}"${streakText}\n\nToca para leerlo y completar tu momento de hoy ✨`;
 
       await Notifications.scheduleNotificationAsync({
         content: {
           title: '📖 Tu momento de hoy te espera',
-          body: `"${teaser}"${streakText}\n\nToca para leerlo y completar tu momento de hoy ✨`,
+          body,
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -709,6 +715,22 @@ export default function App() {
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
             <Text style={styles.sectionHeader}>⚙️ Ajustes</Text>
+
+            {/* Botón añadir widget */}
+            <TouchableOpacity
+              style={styles.widgetBtn}
+              onPress={() => {
+                try {
+                  NativeModules.WidgetLang?.requestPinWidget();
+                } catch (e) {}
+                Alert.alert('🖥️ Añadir widget', 'Si no aparece el diálogo automático:\n\n1. Ve a tu pantalla de inicio\n2. Mantén pulsado un hueco vacío\n3. Toca "Widgets"\n4. Busca "Versículo del Día"\n5. Colócalo y elige tu idioma');
+              }}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.widgetBtnIcon}>🖥️</Text>
+              <Text style={styles.widgetBtnText}>Añadir widget a mi pantalla</Text>
+              <Text style={styles.widgetBtnHint}>Toca aquí y el sistema te lo coloca (elige idioma al añadirlo)</Text>
+            </TouchableOpacity>
 
             {/* Preferencia de entrega */}
             <Text style={styles.settingLabel}>📲 ¿Cómo quieres recibir tu momento diario?</Text>
@@ -1185,6 +1207,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 6,
+  },
+  widgetBtn: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 18,
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#2563EB',
+    borderStyle: 'dashed',
+  },
+  widgetBtnIcon: {
+    fontSize: 28,
+    marginBottom: 6,
+  },
+  widgetBtnText: {
+    color: '#1D4ED8',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  widgetBtnHint: {
+    color: '#6B7280',
+    fontSize: 11,
+    marginTop: 4,
+    textAlign: 'center',
   },
   settingHint: {
     color: '#6B7280',

@@ -36,4 +36,21 @@ public class WidgetLangModule extends ReactContextBaseJavaModule {
             }
         }
     }
+
+    // Abre el diálogo del sistema para fijar el widget en la pantalla de inicio
+    // (requestPinAppWidget: API 21+, funciona en la mayoría de launchers)
+    @ReactMethod
+    public void requestPinWidget() {
+        Context context = getReactApplicationContext();
+        try {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            ComponentName widgetComponent = new ComponentName(context, BibleVerseWidget.class);
+            boolean supported = appWidgetManager.isRequestPinAppWidgetSupported();
+            if (supported) {
+                appWidgetManager.requestPinAppWidget(widgetComponent, null, null);
+            }
+        } catch (Exception e) {
+            // Launcher sin soporte -> el usuario tendrá que añadirlo manualmente
+        }
+    }
 }
