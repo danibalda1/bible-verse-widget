@@ -129,6 +129,38 @@ export async function saveLang(lang) {
   } catch {}
 }
 
+// ── Preferencia de entrega (widget vs notificación) ──
+// 'widget' | 'notificacion' | 'ambos' | 'ninguno'
+export async function getDeliveryPref() {
+  try {
+    return (await AsyncStorage.getItem('@fe_diaria/delivery')) || 'ambos';
+  } catch {
+    return 'ambos';
+  }
+}
+
+export async function saveDeliveryPref(pref) {
+  try {
+    await AsyncStorage.setItem('@fe_diaria/delivery', pref);
+  } catch {}
+}
+
+// ── Hora de la notificación (0-23) ──
+export async function getNotifHour() {
+  try {
+    const raw = await AsyncStorage.getItem('@fe_diaria/notif_hour');
+    return raw !== null ? parseInt(raw, 10) : 8;
+  } catch {
+    return 8;
+  }
+}
+
+export async function saveNotifHour(hour) {
+  try {
+    await AsyncStorage.setItem('@fe_diaria/notif_hour', String(hour));
+  } catch {}
+}
+
 // ── Logros / Insignias ──
 export const ACHIEVEMENTS = [
   { id: 'first_visit', name: 'Primer paso', desc: 'Abre Fe Diaria por primera vez', icon: '🚪', days: 1 },

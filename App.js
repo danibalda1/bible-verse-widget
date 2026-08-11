@@ -32,6 +32,10 @@ import {
   saveUnlockedAchievements,
   getDoneDays,
   addDoneDay,
+  getDeliveryPref,
+  saveDeliveryPref,
+  getNotifHour,
+  saveNotifHour,
 } from './storage';
 
 // Configuración de notificaciones
@@ -69,8 +73,7 @@ const TABS = [
   { code: 'favoritos', name: 'Favoritos', icon: '❤️' },
   { code: 'guia', name: 'Guía', icon: '📚' },
   { code: 'oraciones', name: 'Oraciones', icon: '🙏' },
-  { code: 'mandamientos', name: 'Los 10', icon: '📜' },
-  { code: 'sacramentos', name: 'Sacramentos', icon: '⛪' },
+  { code: 'ajustes', name: 'Ajustes', icon: '⚙️' },
 ];
 
 // Configuración FREE vs PREMIUM (estrategia: gratis generosa, premium = funciones)
@@ -125,6 +128,8 @@ export default function App() {
   const [refreshing, setRefreshing] = useState(false);
   const [achievements, setAchievements] = useState([]);
   const [doneDays, setDoneDays] = useState([]);
+  const [deliveryPref, setDeliveryPref] = useState('ambos');
+  const [notifHour, setNotifHour] = useState(8);
   // Animaciones
   const verseAnim = useRef(new Animated.Value(1)).current;
   const confettiPieces = useRef(
@@ -209,6 +214,9 @@ export default function App() {
       const [achs, ddays] = await Promise.all([getUnlockedAchievements(), getDoneDays()]);
       setAchievements(achs);
       setDoneDays(ddays);
+      const [dp, nh] = await Promise.all([getDeliveryPref(), getNotifHour()]);
+      setDeliveryPref(dp);
+      setNotifHour(nh);
       // Comprobar logros según la racha actual
       const newAchs = [...achs];
       let changed = false;
@@ -248,18 +256,25 @@ export default function App() {
 
       await Notifications.cancelAllScheduledNotificationsAsync();
 
+      // Si el usuario no quiere notificaciones, no programar
+      if (deliveryPref === 'widget' || deliveryPref === 'ninguno') {
+        return;
+      }
+
       const v = versesData.verses[dayIndex % versesData.verses.length];
-      const consejos = versesData.consejos || [];
-      const consejo = consejos.length > 0 ? consejos[dayIndex % consejos.length] : '';
+      const texto = v[lang] || v.es;
+      // Cebo: solo primeras palabras del versículo para invitar a abrir la app
+      const teaser = texto.length > 40 ? texto.slice(0, 40).trim() + '...' : texto;
+      const streakText = streak > 0 ? ` · tu racha de ${streak} ${streak === 1 ? 'día' : 'días'} sigue viva 🔥` : '';
 
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: '📖 Versículo del Día',
-          body: `"${v[lang] || v.es}" — ${v.ref}${consejo ? `\n💡 ${consejo}` : ''}`,
+          title: '📖 Tu momento de hoy te espera',
+          body: `"${teaser}"${streakText}\n\nToca para leerlo y completar tu momento de hoy ✨`,
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DAILY,
-          hour: 8,
+          hour: notifHour,
           minute: 0,
         },
       });
@@ -690,6 +705,75 @@ export default function App() {
           </ScrollView>
         );
 
+      case 'ajustes':
+        return (
+          <ScrollView contentContainerStyle={styles.tabContent}>
+            <Text style={styles.sectionHeader}>⚙️ Ajustes</Text>
+
+            {/* Preferencia de entrega */}
+            <Text style={styles.settingLabel}>📲 ¿Cómo quieres recibir tu momento diario?</Text>
+            <Text style={styles.settingHint}>En móviles antiguos el widget puede ir lento o no caber — la notificación es una alternativa ligera.</Text>
+            {[
+              { code: 'ambos', icon: '📱', name: 'Widget + Notificación', desc: 'Widget en pantalla y aviso a la hora elegida' },
+              { code: 'widget', icon: '🖥️', name: 'Solo widget', desc: 'Sin notificaciones, solo el widget en tu pantalla' },
+              { code: 'notificacion', icon: '🔔', name: 'Solo notificación', desc: 'Sin widget, solo el aviso diario (ideal para móviles antiguos)' },
+              { code: 'ninguno', icon: '🙈', name: 'Nada', desc: 'Abro la app cuando quiero, sin avisos' },
+            ].map((opt) => (
+              <TouchableOpacity
+                key={opt.code}
+                style={[styles.settingOption, deliveryPref === opt.code && styles.settingOptionActive]}
+                onPress={async () => {
+                  setDeliveryPref(opt.code);
+                  await saveDeliveryPref(opt.code);
+                  scheduleDailyNotification();
+                }}
+              >
+                <Text style={styles.settingOptionIcon}>{opt.icon}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.settingOptionName, deliveryPref === opt.code && styles.settingOptionNameActive]}>
+                    {opt.name}
+                  </Text>
+                  <Text style={styles.settingOptionDesc}>{opt.desc}</Text>
+                </View>
+                {deliveryPref === opt.code && <Text style={styles.settingCheck}>✓</Text>}
+              </TouchableOpacity>
+            ))}
+
+            {/* Hora de la notificación */}
+            {deliveryPref !== 'widget' && deliveryPref !== 'ninguno' && (
+              <>
+                <Text style={[styles.settingLabel, { marginTop: 20 }]}>🕗 Hora de la notificación</Text>
+                <View style={styles.hourRow}>
+                  {[7, 8, 9, 10, 12, 14, 18, 20].map((h) => (
+                    <TouchableOpacity
+                      key={h}
+                      style={[styles.hourChip, notifHour === h && styles.hourChipActive]}
+                      onPress={async () => {
+                        setNotifHour(h);
+                        await saveNotifHour(h);
+                        scheduleDailyNotification();
+                      }}
+                    >
+                      <Text style={[styles.hourText, notifHour === h && styles.hourTextActive]}>{h}:00</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </>
+            )}
+
+            {/* Info extra */}
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>✝️ Fe Diaria</Text>
+              <Text style={styles.cardBodySmall}>
+                Versión 1.0 · 128 versículos en 5 idiomas · 316 consejos · 8 oraciones
+              </Text>
+              <Text style={styles.cardBodySmall}>
+                Hecha con ❤️ para acompañarte cada día. Westlink SL.
+              </Text>
+            </View>
+          </ScrollView>
+        );
+
       case 'oraciones':
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
@@ -1095,6 +1179,81 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
     marginBottom: 12,
+  },
+  settingLabel: {
+    color: '#111827',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  settingHint: {
+    color: '#6B7280',
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  settingOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 8,
+    shadowColor: '#1E3A8A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  settingOptionActive: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1.5,
+    borderColor: '#2563EB',
+  },
+  settingOptionIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  settingOptionName: {
+    color: '#111827',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  settingOptionNameActive: {
+    color: '#1D4ED8',
+  },
+  settingOptionDesc: {
+    color: '#6B7280',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  settingCheck: {
+    color: '#2563EB',
+    fontSize: 18,
+    fontWeight: '800',
+    marginLeft: 8,
+  },
+  hourRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  hourChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#EEF1F6',
+  },
+  hourChipActive: {
+    backgroundColor: '#2563EB',
+  },
+  hourText: {
+    color: '#4B5563',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  hourTextActive: {
+    color: '#FFFFFF',
   },
   doneBadge: {
     color: '#FFFFFF',
