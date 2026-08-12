@@ -209,7 +209,7 @@ export default function App() {
     try {
       const res = await fetch('https://westlinksl.com/api/fe-diaria-ia', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-app-token': 'fe-diar' },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
