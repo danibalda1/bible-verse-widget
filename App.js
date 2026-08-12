@@ -238,7 +238,8 @@ export default function App() {
   }, []);
 
   const pickVerse = (day, themeCode = theme) => {
-    const verses = versesData.verses;
+    // Los versículos premium solo se muestran con Premium
+    const verses = versesData.verses.filter((v) => isPremium || !v.premium);
     if (themeCode && themeCode !== 'fe') {
       const themed = verses.filter((v) => v.theme === themeCode);
       if (themed.length > 0) {
@@ -261,7 +262,8 @@ export default function App() {
         return;
       }
 
-      const v = versesData.verses[dayIndex % versesData.verses.length];
+      const allVerses = versesData.verses.filter((v) => isPremium || !v.premium);
+      const v = allVerses[dayIndex % allVerses.length];
       const texto = v[lang] || v.es;
       const streakText = streak > 0 ? ` · tu racha de ${streak} ${streak === 1 ? 'día' : 'días'} sigue viva 🔥` : '';
 
@@ -290,7 +292,7 @@ export default function App() {
   };
 
   const nextVerse = () => {
-    const allVerses = versesData.verses;
+    const allVerses = versesData.verses.filter((v) => isPremium || !v.premium);
     let filtered = allVerses;
     if (theme !== 'fe') {
       const themed = allVerses.filter((v) => v.theme === theme);
@@ -610,7 +612,7 @@ export default function App() {
 
             {!isPremium && (
               <TouchableOpacity style={styles.premiumBanner} onPress={() => showPremiumAlert('Premium')}>
-                <Text style={styles.premiumBannerText}>✨ Premium: planes de lectura, estadísticas, favoritos ilimitados y más</Text>
+                <Text style={styles.premiumBannerText}>✨ Premium: versículos exclusivos, planes de lectura, estadísticas y más</Text>
                 <Text style={styles.premiumCta}>0,99€/mes · 10€/año · 25€ vitalicio →</Text>
               </TouchableOpacity>
             )}
@@ -787,7 +789,7 @@ export default function App() {
             <View style={styles.card}>
               <Text style={styles.cardTitle}>✝️ Fe Diaria</Text>
               <Text style={styles.cardBodySmall}>
-                Versión 1.0 · 128 versículos en 5 idiomas · 316 consejos · 8 oraciones
+                Versículo del día en 5 idiomas · consejos · oraciones · guía de lectura
               </Text>
               <Text style={styles.cardBodySmall}>
                 Hecha con ❤️ para acompañarte cada día. Westlink SL.
