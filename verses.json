@@ -2815,5 +2815,91 @@
    "Subraya o anota lo que te llame la atención",
    "Comparte con alguien lo que estás leyendo: se aprende enseñando"
   ]
- }
+ },
+ "oraciones_ocasion": [
+  {
+   "id": 1,
+   "titulo": "Por los enfermos",
+   "icon": "🤒",
+   "es": "Señor Jesús, Tú que curaste a los enfermos y consolaste a los afligidos, pon tu mano sobre [nombre] y devuélvele la salud. Dame paciencia y esperanza en este tiempo de prueba. Que sienta tu presencia y tu paz. Amén.",
+   "en": "Lord Jesus, You who healed the sick and comforted the afflicted, place Your hand upon [name] and restore their health. Give me patience and hope in this time of trial. May they feel Your presence and Your peace. Amen."
+  },
+  {
+   "id": 2,
+   "titulo": "Antes de un viaje",
+   "icon": "✈️",
+   "es": "Dios Padre, te encomiendo este viaje. Guía mis pasos, protege mi camino y llévame a buen puerto. Que sea un viaje seguro y que vuelva con los míos. En el nombre de Jesús, Amén.",
+   "en": "God our Father, I entrust this journey to You. Guide my steps, protect my path, and bring me safely to my destination. May it be a safe trip and may I return to my loved ones. In Jesus' name, Amen."
+  },
+  {
+   "id": 3,
+   "titulo": "Por el trabajo",
+   "icon": "💼",
+   "es": "Señor, bendice el trabajo de mis manos. Dame sabiduría para hacerlo bien, honestidad para no fallarte y fortaleza para los días difíciles. Que mi trabajo sea servicio y mi esfuerzo, ofrenda. Amén.",
+   "en": "Lord, bless the work of my hands. Give me wisdom to do it well, honesty to never fail You, and strength for difficult days. May my work be service and my effort an offering. Amen."
+  },
+  {
+   "id": 4,
+   "titulo": "Por la familia",
+   "icon": "👨‍👩‍👧‍👦",
+   "es": "Dios de amor, protege a mi familia. Une nuestros corazones, perdona nuestras faltas y haz de nuestra casa un lugar de paz. Cuida de cada uno de los míos, presentes y ausentes. Amén.",
+   "en": "God of love, protect my family. Unite our hearts, forgive our faults, and make our home a place of peace. Watch over each of my loved ones, near and far. Amen."
+  },
+  {
+   "id": 5,
+   "titulo": "En momentos de angustia",
+   "icon": "😔",
+   "es": "Señor, mi corazón está turbado. En mi angustia clamo a Ti: dame tu paz, la que el mundo no puede dar. Toma mis preocupaciones y dame descanso. Tú eres mi refugio y mi fortaleza. Amén.",
+   "en": "Lord, my heart is troubled. In my distress I cry out to You: give me Your peace, the peace the world cannot give. Take my worries and give me rest. You are my refuge and my strength. Amen."
+  },
+  {
+   "id": 6,
+   "titulo": "Para dar gracias",
+   "icon": "🙏",
+   "es": "Gracias, Dios mío, por el día de hoy. Gracias por la vida, por el pan de cada día, por las personas que me aman. Enséñame a ver tus regalos en las pequeñas cosas y a ser agradecido siempre. Amén.",
+   "en": "Thank You, my God, for this day. Thank You for life, for our daily bread, for the people who love me. Teach me to see Your gifts in the small things and to always be grateful. Amen."
+  },
+  {
+   "id": 7,
+   "titulo": "Por los difuntos",
+   "icon": "🕯️",
+   "es": "Padre eterno, acoge en tu paz a los que nos han dejado. Que la luz eterna brille para ellos y descansen en tu amor. Consuela a los que lloran su ausencia y danos la esperanza del reencuentro. Amén.",
+   "en": "Eternal Father, welcome into Your peace those who have left us. May eternal light shine upon them and may they rest in Your love. Comfort those who mourn their absence and give us hope of reunion. Amen."
+  },
+  {
+   "id": 8,
+   "titulo": "Antes de comer",
+   "icon": "🍞",
+   "es": "Bendice, Señor, este alimento que vamos a recibir y a quienes lo han preparado. Que nunca nos falte el pan y que sepamos compartirlo con quien lo necesita. Amén.",
+   "en": "Bless, Lord, this food we are about to receive and those who prepared it. May we never lack bread and may we know how to share it with those in need. Amen."
+  },
+  {
+   "id": 9,
+   "titulo": "Por la paz",
+   "icon": "🕊️",
+   "es": "Señor, haz de mí un instrumento de tu paz. Donde haya odio, que ponga amor; donde haya ofensa, perdón; donde haya duda, fe. Que la paz de Cristo reine en mi corazón y en el mundo. Amén.",
+   "en": "Lord, make me an instrument of Your peace. Where there is hatred, let me sow love; where there is offense, pardon; where there is doubt, faith. May the peace of Christ reign in my heart and in the world. Amen."
+  },
+  {
+   "id": 10,
+   "titulo": "Para tomar decisiones",
+   "icon": "🤔",
+   "es": "Espíritu Santo, ilumina mi mente en este momento de decisión. Dame claridad para elegir bien y valor para seguir el camino correcto. Que no me guíe el miedo sino la confianza en Ti. Amén.",
+   "en": "Holy Spirit, illuminate my mind in this moment of decision. Give me clarity to choose well and courage to follow the right path. May I be guided not by fear but by trust in You. Amen."
+  },
+  {
+   "id": 11,
+   "titulo": "Por la mañana",
+   "icon": "🌅",
+   "es": "Señor, te doy gracias por este nuevo día. Acompáñame en todo lo que haga, bendice mi trabajo y mis relaciones. Que hoy sea yo tu reflejo en el mundo. Amén.",
+   "en": "Lord, I thank You for this new day. Accompany me in all I do, bless my work and my relationships. May I be Your reflection in the world today. Amen."
+  },
+  {
+   "id": 12,
+   "titulo": "Por la noche",
+   "icon": "🌙",
+   "es": "Dios mío, al terminar el día te entrego todo lo vivido: lo bueno para darte gracias, lo malo para pedir perdón. Vela mi descanso y despiértame con esperanza. Amén.",
+   "en": "My God, at the end of the day I give You all that I have lived: the good to thank You, the bad to ask forgiveness. Watch over my rest and wake me with hope. Amen."
+  }
+ ]
 }

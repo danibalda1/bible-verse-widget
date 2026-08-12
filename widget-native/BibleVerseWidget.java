@@ -51,8 +51,11 @@ public class BibleVerseWidget extends AppWidgetProvider {
             JSONArray verses = root.getJSONArray("verses");
 
             Calendar now = Calendar.getInstance();
+            // Rota el versículo cada hora: día del año * 24 + hora actual
             int dayOfYear = now.get(Calendar.DAY_OF_YEAR);
-            JSONObject verse = verses.getJSONObject(dayOfYear % verses.length());
+            int hour = now.get(Calendar.HOUR_OF_DAY);
+            int slot = (dayOfYear - 1) * 24 + hour;
+            JSONObject verse = verses.getJSONObject(slot % verses.length());
 
             String text = verse.optString(lang, verse.optString("es", ""));
             String ref = verse.getString("ref");

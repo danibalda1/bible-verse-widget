@@ -13,6 +13,9 @@ import {
   Easing,
   Dimensions,
   Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NativeModules } from 'react-native';
@@ -71,9 +74,10 @@ const THEMES = [
 
 const TABS = [
   { code: 'dia', name: 'Hoy', icon: '📅' },
+  { code: 'ocasion', name: 'Ocasión', icon: '🤲' },
   { code: 'favoritos', name: 'Favoritos', icon: '❤️' },
   { code: 'guia', name: 'Guía', icon: '📚' },
-  { code: 'oraciones', name: 'Oraciones', icon: '🙏' },
+  { code: 'ia', name: 'Pregunta', icon: '🤖' },
   { code: 'ajustes', name: 'Ajustes', icon: '⚙️' },
 ];
 
@@ -133,6 +137,11 @@ export default function App() {
   const [notifHour, setNotifHour] = useState(8);
   const [showLangModal, setShowLangModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
+  // Estado del chat IA
+  const [iaQuestion, setIaQuestion] = useState('');
+  const [iaAnswer, setIaAnswer] = useState('');
+  const [iaLoading, setIaLoading] = useState(false);
+  const [iaError, setIaError] = useState('');
   // Animaciones
   const verseAnim = useRef(new Animated.Value(1)).current;
   const confettiPieces = useRef(
@@ -189,6 +198,30 @@ export default function App() {
   };
   const pressOut = () => {
     Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 40 }).start();
+  };
+
+  // Pregunta a la IA (Fe Diaria)
+  const askIA = async () => {
+    const q = iaQuestion.trim();
+    if (q.length < 3 || iaLoading) return;
+    setIaLoading(true);
+    setIaError('');
+    try {
+      const res = await fetch('http://100.98.124.107:9191/ai-ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q }),
+      });
+      const data = await res.json();
+      if (data.answer) {
+        setIaAnswer(data.answer);
+      } else {
+        setIaError(data.error || 'No he podido responder. Inténtalo de nuevo.');
+      }
+    } catch (e) {
+      setIaError('No hay conexión con el asistente. Comprueba tu red o tu conexión Tailscale.');
+    }
+    setIaLoading(false);
   };
 
   const todayDate = new Date();
@@ -622,6 +655,28 @@ export default function App() {
           </ScrollView>
         );
 
+      case 'ocasion':
+        return (
+          <ScrollView contentContainerStyle={styles.tabContent}>
+            <Text style={styles.sectionHeader}>🤲 Oración para cada momento</Text>
+            <Text style={styles.settingHint}>Sea lo que sea que estés viviendo hoy, hay una oración para ti.</Text>
+            {(versesData.oraciones_ocasion || []).map((o) => (
+              <View key={o.id} style={styles.card}>
+                <View style={styles.cardHeaderRow}>
+                  <Text style={styles.cardTitle}>{o.icon} {o.titulo}</Text>
+                  <TouchableOpacity
+                    onPress={() => onToggleFavorite({ id: `oo_${o.id}`, type: 'oracion', texto: o[lang] || o.es, ref: o.titulo })}
+                    style={styles.favBtn}
+                  >
+                    <Text style={styles.favIcon}>{isFav(`oo_${o.id}`, 'oracion') ? '❤️' : '🤍'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.cardBody}>{o[lang] || o.es}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        );
+
       case 'favoritos':
         return (
           <ScrollView contentContainerStyle={styles.tabContent}>
@@ -714,6 +769,76 @@ export default function App() {
               </View>
             ))}
           </ScrollView>
+        );
+
+      case 'ia':
+        return (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <ScrollView contentContainerStyle={styles.tabContent} keyboardShouldPersistTaps="handled">
+              <Text style={styles.sectionHeader}>🤖 Pregunta a Fe Diaria</Text>
+              <View style={styles.card}>
+                <Text style={styles.cardBody}>
+                  ¿Tienes una duda sobre la Biblia, la fe o necesitas una oración? Pregúntame y te respondo con versículos y palabras de esperanza.
+                </Text>
+              </View>
+
+              {iaAnswer !== '' && (
+                <View style={styles.iaAnswerCard}>
+                  <Text style={styles.cardTitle}>💬 Respuesta</Text>
+                  <Text style={styles.iaAnswerText}>{iaAnswer}</Text>
+                </View>
+              )}
+
+              {iaError !== '' && (
+                <View style={styles.iaErrorCard}>
+                  <Text style={styles.iaErrorText}>⚠️ {iaError}</Text>
+                </View>
+              )}
+
+              <View style={styles.iaInputRow}>
+                <TextInput
+                  style={styles.iaInput}
+                  placeholder="Escribe tu pregunta sobre la fe..."
+                  placeholderTextColor="#9CA3AF"
+                  value={iaQuestion}
+                  onChangeText={setIaQuestion}
+                  multiline
+                  maxLength={500}
+                />
+                <TouchableOpacity
+                  style={[styles.iaSendBtn, iaLoading && { opacity: 0.5 }]}
+                  onPress={askIA}
+                  disabled={iaLoading}
+                >
+                  <Text style={styles.iaSendText}>{iaLoading ? '⏳' : '➤'}</Text>
+                </TouchableOpacity>
+              </View>
+
+              {iaLoading && (
+                <Text style={styles.iaLoadingText}>Consultando las Escrituras...</Text>
+              )}
+
+              {/* Sugerencias de preguntas */}
+              <Text style={styles.settingLabel}>💡 Puedes preguntar:</Text>
+              {[
+                '¿Qué dice la Biblia sobre la ansiedad?',
+                'Necesito una oración para mi madre enferma',
+                '¿Cuál es el salmo más reconfortante?',
+                '¿Cómo puedo perdonar a alguien?',
+              ].map((s) => (
+                <TouchableOpacity
+                  key={s}
+                  style={styles.iaSuggestion}
+                  onPress={() => { setIaQuestion(s); }}
+                >
+                  <Text style={styles.iaSuggestionText}>{s}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </KeyboardAvoidingView>
         );
 
       case 'ajustes':
@@ -1377,6 +1502,80 @@ const styles = StyleSheet.create({
   },
   hourTextActive: {
     color: '#FFFFFF',
+  },
+  iaAnswerCard: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#2563EB',
+  },
+  iaAnswerText: {
+    color: '#1E3A8A',
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  iaErrorCard: {
+    backgroundColor: '#FEF2F2',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+  },
+  iaErrorText: {
+    color: '#B91C1C',
+    fontSize: 13,
+  },
+  iaInputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 12,
+    gap: 8,
+  },
+  iaInput: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#111827',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    minHeight: 44,
+    maxHeight: 120,
+  },
+  iaSendBtn: {
+    backgroundColor: '#2563EB',
+    borderRadius: 14,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iaSendText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  iaLoadingText: {
+    color: '#6B7280',
+    fontSize: 12,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  iaSuggestion: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  iaSuggestionText: {
+    color: '#374151',
+    fontSize: 13,
   },
   doneBadge: {
     color: '#FFFFFF',
