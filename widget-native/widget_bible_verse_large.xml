@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root_large"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="18dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/widget_verse_text_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        android:textColor="#1E3A8A"
+        android:lineSpacingMultiplier="1.35"
+        android:maxLines="8"
+        android:ellipsize="end"
+        android:text="Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree no se pierda, mas tenga vida eterna." />
+
+    <TextView
+        android:id="@+id/widget_verse_ref_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#1D4ED8"
+        android:text="— Juan 3:16" />
+
+</LinearLayout>

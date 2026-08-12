@@ -20,6 +20,7 @@ import {
 import * as Notifications from 'expo-notifications';
 import { NativeModules } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import versesData from './verses.json';
 import {
@@ -120,6 +121,12 @@ const getLevel = (streak) => {
 const { width: SCREEN_W } = Dimensions.get('window');
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Inter-Regular': require('./assets/fonts/Inter-Regular.otf'),
+    'Inter-Medium': require('./assets/fonts/Inter-Medium.otf'),
+    'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.otf'),
+    'Inter-Bold': require('./assets/fonts/Inter-Bold.otf'),
+  });
   const [lang, setLang] = useState('es');
   const [theme, setTheme] = useState('fe');
   const [tab, setTab] = useState('dia');
@@ -1115,17 +1122,20 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logoBadgeText: {
+    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     fontSize: 26,
     fontWeight: '700',
   },
   logo: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 22,
     fontWeight: '800',
     letterSpacing: -0.3,
   },
   subtitle: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 13,
     marginTop: 4,
@@ -1149,6 +1159,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   selectorPillText: {
+    fontFamily: 'Inter-SemiBold',
     color: '#374151',
     fontSize: 12,
     fontWeight: '600',
@@ -1165,6 +1176,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalTitle: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 16,
     fontWeight: '800',
@@ -1184,6 +1196,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFF6FF',
   },
   modalOptionText: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 15,
     fontWeight: '600',
@@ -1295,12 +1308,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   levelName: {
+    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: -0.2,
   },
   levelStreak: {
+    fontFamily: 'Inter-SemiBold',
     color: 'rgba(255,255,255,0.9)',
     fontSize: 13,
     marginTop: 2,
@@ -1319,6 +1334,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   progressLabel: {
+    fontFamily: 'Inter-SemiBold',
     color: 'rgba(255,255,255,0.9)',
     fontSize: 11,
     marginTop: 6,
@@ -1356,6 +1372,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   weekLabel: {
+    fontFamily: 'Inter-Regular',
     color: '#6B7280',
     fontSize: 10,
     marginTop: 4,
@@ -1388,6 +1405,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   achievementName: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 10,
     fontWeight: '700',
@@ -1404,6 +1422,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   settingLabel: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 14,
     fontWeight: '700',
@@ -1435,6 +1454,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   settingHint: {
+    fontFamily: 'Inter-Regular',
     color: '#6B7280',
     fontSize: 12,
     lineHeight: 18,
@@ -1463,6 +1483,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   settingOptionName: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 14,
     fontWeight: '700',
@@ -1471,6 +1492,7 @@ const styles = StyleSheet.create({
     color: '#1D4ED8',
   },
   settingOptionDesc: {
+    fontFamily: 'Inter-Regular',
     color: '#6B7280',
     fontSize: 12,
     marginTop: 2,
@@ -1496,6 +1518,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563EB',
   },
   hourText: {
+    fontFamily: 'Inter-Medium',
     color: '#4B5563',
     fontSize: 12,
     fontWeight: '600',
@@ -1512,6 +1535,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#2563EB',
   },
   iaAnswerText: {
+    fontFamily: 'Inter-Regular',
     color: '#1E3A8A',
     fontSize: 14,
     lineHeight: 22,
@@ -1574,6 +1598,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   iaSuggestionText: {
+    fontFamily: 'Inter-Regular',
     color: '#374151',
     fontSize: 13,
   },
@@ -1621,6 +1646,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   cardTitle: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 13,
     fontWeight: '700',
@@ -1628,6 +1654,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   dateLabel: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 12,
     textAlign: 'center',
@@ -1643,18 +1670,21 @@ const styles = StyleSheet.create({
     borderLeftColor: '#2563EB',
   },
   premiumBannerText: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
   },
   cardBody: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 15,
     lineHeight: 24,
     textAlign: 'center',
   },
   cardBodySmall: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 13,
     lineHeight: 20,
@@ -1669,6 +1699,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   verseRef: {
+    fontFamily: 'Inter-SemiBold',
     color: '#2563EB',
     fontSize: 14,
     fontWeight: '600',
@@ -1694,6 +1725,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   btnSecondaryText: {
+    fontFamily: 'Inter-SemiBold',
     color: '#111827',
     fontSize: 13,
     fontWeight: '600',
@@ -1715,6 +1747,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   btnPrimaryText: {
+    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
@@ -1743,11 +1776,13 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   doneBtnText: {
+    fontFamily: 'Inter-Bold',
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
   },
   sectionHeader: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 16,
     fontWeight: '800',
@@ -1772,12 +1807,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   premiumText: {
+    fontFamily: 'Inter-Regular',
     color: '#374151',
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
   },
   premiumCta: {
+    fontFamily: 'Inter-Bold',
     color: '#2563EB',
     fontSize: 13,
     fontWeight: '700',
@@ -1787,17 +1824,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   guiaPasoTitle: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
   },
   guiaPasoText: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 13,
     lineHeight: 20,
   },
   planPaso: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 13,
     lineHeight: 20,
@@ -1810,6 +1850,7 @@ const styles = StyleSheet.create({
     width: 28,
   },
   libroTitle: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontSize: 14,
     fontWeight: '700',
@@ -1820,6 +1861,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   libroResumen: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 12,
     lineHeight: 18,
@@ -1839,12 +1881,14 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   listNum: {
+    fontFamily: 'Inter-Bold',
     color: '#2563EB',
     fontSize: 15,
     fontWeight: '700',
     width: 30,
   },
   listText: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 14,
     flex: 1,
@@ -1863,6 +1907,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyText: {
+    fontFamily: 'Inter-Regular',
     color: '#4B5563',
     fontSize: 14,
     textAlign: 'center',
@@ -1889,12 +1934,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   tabText: {
+    fontFamily: 'Inter-Medium',
     color: '#4B5563',
     fontSize: 10,
     marginTop: 2,
     fontWeight: '500',
   },
   tabTextActive: {
+    fontFamily: 'Inter-Bold',
     color: '#111827',
     fontWeight: '700',
   },
