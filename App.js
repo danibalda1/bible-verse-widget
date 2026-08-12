@@ -12,6 +12,7 @@ import {
   Animated,
   Easing,
   Dimensions,
+  Modal,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { NativeModules } from 'react-native';
@@ -130,6 +131,8 @@ export default function App() {
   const [doneDays, setDoneDays] = useState([]);
   const [deliveryPref, setDeliveryPref] = useState('ambos');
   const [notifHour, setNotifHour] = useState(8);
+  const [showLangModal, setShowLangModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
   // Animaciones
   const verseAnim = useRef(new Animated.Value(1)).current;
   const confettiPieces = useRef(
@@ -885,47 +888,59 @@ export default function App() {
         <Text style={styles.subtitle}>Tu momento espiritual de cada día</Text>
       </View>
 
-      {/* Language selector */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.langBar}
-        contentContainerStyle={styles.langBarContent}
-      >
-        {LANGUAGES.map((l) => (
-          <TouchableOpacity
-            key={l.code}
-            style={[styles.langChip, lang === l.code && styles.langChipActive]}
-            onPress={() => changeLang(l.code)}
-          >
-            <Text style={[styles.langText, lang === l.code && styles.langTextActive]}>
-              {l.flag} {l.name}
+      {/* Selectores compactos: idioma + tema en una fila discreta */}
+      <View style={styles.selectorRow}>
+        <TouchableOpacity style={styles.selectorPill} onPress={() => setShowLangModal(true)}>
+          <Text style={styles.selectorPillText}>
+            {LANGUAGES.find((l) => l.code === lang)?.flag} {LANGUAGES.find((l) => l.code === lang)?.name} ▾
+          </Text>
+        </TouchableOpacity>
+        {tab === 'dia' && (
+          <TouchableOpacity style={styles.selectorPill} onPress={() => setShowThemeModal(true)}>
+            <Text style={styles.selectorPillText}>
+              {THEMES.find((t) => t.code === theme)?.icon} {THEMES.find((t) => t.code === theme)?.name} ▾
             </Text>
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+        )}
+      </View>
 
-      {/* Theme selector (solo en pestaña día) */}
-      {tab === 'dia' && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.themeBar}
-          contentContainerStyle={styles.themeBarContent}
-        >
-          {THEMES.map((t) => (
-            <TouchableOpacity
-              key={t.code}
-              style={[styles.themeChip, theme === t.code && styles.themeChipActive]}
-              onPress={() => changeTheme(t.code)}
-            >
-              <Text style={[styles.themeText, theme === t.code && styles.themeTextActive]}>
-                {t.icon} {t.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+      {/* Modal de idioma */}
+      <Modal visible={showLangModal} transparent animationType="fade" onRequestClose={() => setShowLangModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowLangModal(false)}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>🌍 Idioma</Text>
+            {LANGUAGES.map((l) => (
+              <TouchableOpacity
+                key={l.code}
+                style={[styles.modalOption, lang === l.code && styles.modalOptionActive]}
+                onPress={() => { changeLang(l.code); setShowLangModal(false); }}
+              >
+                <Text style={styles.modalOptionText}>{l.flag} {l.name}</Text>
+                {lang === l.code && <Text style={styles.modalCheck}>✓</Text>}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Modal de tema */}
+      <Modal visible={showThemeModal} transparent animationType="fade" onRequestClose={() => setShowThemeModal(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowThemeModal(false)}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>🎯 Tema del versículo</Text>
+            {THEMES.map((t) => (
+              <TouchableOpacity
+                key={t.code}
+                style={[styles.modalOption, theme === t.code && styles.modalOptionActive]}
+                onPress={() => { changeTheme(t.code); setShowThemeModal(false); }}
+              >
+                <Text style={styles.modalOptionText}>{t.icon} {t.name}</Text>
+                {theme === t.code && <Text style={styles.modalCheck}>✓</Text>}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Content */}
       <View style={styles.content}>
@@ -992,7 +1007,66 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   langBar: {
+    marginBottom: 4,
+  },
+  selectorRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
     marginBottom: 8,
+  },
+  selectorPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  selectorPillText: {
+    color: '#374151',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    color: '#111827',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  modalOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    marginBottom: 4,
+  },
+  modalOptionActive: {
+    backgroundColor: '#EFF6FF',
+  },
+  modalOptionText: {
+    color: '#111827',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  modalCheck: {
+    color: '#2563EB',
+    fontSize: 16,
+    fontWeight: '800',
   },
   langBarContent: {
     gap: 6,
