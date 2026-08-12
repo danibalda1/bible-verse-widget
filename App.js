@@ -200,14 +200,14 @@ export default function App() {
     Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 40 }).start();
   };
 
-  // Pregunta a la IA (Fe Diaria)
+  // Pregunta a la IA (Fe Diaria) — endpoint público Vercel, funciona para todos
   const askIA = async () => {
     const q = iaQuestion.trim();
     if (q.length < 3 || iaLoading) return;
     setIaLoading(true);
     setIaError('');
     try {
-      const res = await fetch('http://100.98.124.107:9191/ai-ask', {
+      const res = await fetch('https://westlinksl.com/api/fe-diaria-ia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: q }),
@@ -219,7 +219,7 @@ export default function App() {
         setIaError(data.error || 'No he podido responder. Inténtalo de nuevo.');
       }
     } catch (e) {
-      setIaError('No hay conexión con el asistente. Comprueba tu red o tu conexión Tailscale.');
+      setIaError('No hay conexión con el asistente. Inténtalo de nuevo más tarde.');
     }
     setIaLoading(false);
   };
